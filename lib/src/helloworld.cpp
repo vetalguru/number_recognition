@@ -4,7 +4,11 @@
 
 #include <iostream>
 
-void print_message() {
+void PrintTestMessage() {
     std::cout << "Hello world!!!" << std::endl;
+}
+
+int GetTestNumber() {
+    return 42;
 }
 
