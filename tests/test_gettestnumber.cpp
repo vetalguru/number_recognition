@@ -4,7 +4,7 @@
 
 #include "../../lib/include/helloworld.h"
 
-TEST(GetTestNumber, SimpleTest)
-{
+TEST(GetTestNumber, SimpleTest) {
     EXPECT_EQ(42, GetTestNumber());
 }
+
