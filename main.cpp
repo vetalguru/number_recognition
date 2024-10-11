@@ -2,8 +2,12 @@
 
 #include "lib/include/helloworld.h"
 
+#include <iostream>
+
 int main(int argc, char* argv[]) {
-    print_message();
+    PrintTestMessage();
+
+    std::cout << "Test number = " << GetTestNumber() << std::endl;
 
     return 0;
 }
