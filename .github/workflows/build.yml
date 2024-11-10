@@ -1,4 +1,4 @@
-name: Build Ubuntu
+name: build
 
 on:
   push:
@@ -18,6 +18,8 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
+    - name: boost
+      run: sudo apt-get update && sudo apt-get install -yq libboost-program-options-dev
 
     - name: Checkers
       run: pip install cpplint && cpplint --recursive .
@@ -26,7 +28,9 @@ jobs:
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target all
+      env:
+        MAKEFLAGS: "-j3"
 
     - name: Tests
       working-directory: ${{github.workspace}}/build/tests
