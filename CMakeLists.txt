@@ -14,10 +14,21 @@ set(SOURCES_LIST ${CMAKE_SOURCE_DIR}/main.cpp
 
 include_directories(${RECOGNITION_LIBRARY_DIR}/include)
 
+find_package(Boost 1.74.0 COMPONENTS program_options)
+if(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+  set(BOOST_LIBS ${Boost_LIBRARIES})
+else()
+  set(BOOST_LIBS )
+  message(WARNING "BOOST NOT FOUND!!!")
+endif()
+
 add_executable(${PROJECT_NAME} ${SOURCES_LIST} ${HEADERS_LIST})
 
 add_subdirectory(${RECOGNITION_LIBRARY_DIR})
 add_subdirectory(${TESTS_DIR})
 
-target_link_libraries(${PROJECT_NAME} recognition)
-
+target_link_libraries(${PROJECT_NAME}
+    recognition
+    ${BOOST_LIBS}
+)
