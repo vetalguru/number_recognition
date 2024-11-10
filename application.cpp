@@ -1,6 +1,6 @@
 // Copyright 2024 Vitalii Shkibtan
 
-#include "application.h"
+#include "./application.h"
 
 #include <iostream>
 #include <string>
