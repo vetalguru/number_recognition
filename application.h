@@ -1,15 +1,14 @@
 // Copyright 2024 Vitalii Shkibtan
 
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#ifndef APPLICATION_H_
+#define APPLICATION_H_
 
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
 
-class Application
-{
-public:
+class Application {
+  public:
     explicit Application(const int argc, const char* const argv[]);
     ~Application() = default;
 
@@ -21,10 +20,11 @@ public:
 
     int run() const noexcept;
 
-private:
-    void parseCommandLine(const int argc, const char* const argv[]) const noexcept;
+  private:
+    void parseCommandLine(const int argc,
+        const char* const argv[]) const noexcept;
     void initTrainingMode(const po::variables_map& vm) const noexcept;
     void initRecognitionMode(const po::variables_map& vm) const noexcept;
 };
 
-#endif // APPLICATION_H
+#endif  // APPLICATION_H_
