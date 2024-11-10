@@ -1,6 +1,6 @@
 // Copyright 2024 Vitalii Shkibtan
 
-#include "application.h"
+#include "./application.h"
 
 int main(int argc, char* argv[]) {
     Application app(argc, argv);

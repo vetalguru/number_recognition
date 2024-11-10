@@ -8,7 +8,7 @@
 namespace po = boost::program_options;
 
 class Application {
-  public:
+ public:
     explicit Application(const int argc, const char* const argv[]);
     ~Application() = default;
 
@@ -20,7 +20,7 @@ class Application {
 
     int run() const noexcept;
 
-  private:
+ private:
     void parseCommandLine(const int argc,
         const char* const argv[]) const noexcept;
     void initTrainingMode(const po::variables_map& vm) const noexcept;
