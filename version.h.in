@@ -1,0 +1,10 @@
+// Copyright 2024 Vitalii Shkibtan
+
+#ifndef VERSION_H
+#define VERSION_H
+
+#define VERSION_MAJOR @VERSION_MAJOR@
+#define VERSION_MINOR @VERSION_MINOR@
+#define VERSION_BUILD "@VERSION_BUILD@"
+
+#endif // VERSION_H
