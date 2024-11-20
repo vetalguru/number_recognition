@@ -20,6 +20,8 @@ class Application {
 
     int run() const noexcept;
 
+    std::string version() const;
+
  private:
     void parseCommandLine(const int argc,
         const char* const argv[]) const noexcept;

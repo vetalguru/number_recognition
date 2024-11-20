@@ -3,9 +3,11 @@
 #include "./application.h"
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include "lib/include/helloworld.h"
+#include "version.h"
 
 Application::Application(const int argc, const char* const argv[]) {
     parseCommandLine(argc, argv);
@@ -19,34 +21,45 @@ int Application::run() const noexcept {
     return 0;
 }
 
+std::string Application::version() const {
+    std::ostringstream ss;
+    ss << static_cast<int>(VERSION_MAJOR) << "."
+       << static_cast<int>(VERSION_MINOR) << "."
+       << VERSION_BUILD;
+
+    return ss.str();
+}
+
 void Application::parseCommandLine(
     const int argc, const char* const argv[]) const noexcept {
-    po::options_description mainDesc{"General options:"};
+    po::options_description mainDesc{"General options"};
     std::string taskType;
     mainDesc.add_options()
-        ("help,h", "Show help")
+        ("help,h", "Show help message")
+        ("version,v", "Show version")
         ("mode,m", po::value<std::string>(&taskType),
             "Select mode: training, recognition");
 
-    po::options_description trainDesc("Training options:");
+    po::options_description trainDesc("Training options");
     trainDesc.add_options()
         ("input,i", po::value<std::string>(), "Input file")
         ("info,i", po::value<std::string>(), "Input data file")
         ("output,o", po::value<std::string>(), "Output parameters file");
 
-    po::options_description recDesc("Recognition options:");
+    po::options_description recDesc("Recognition options");
     recDesc.add_options()
         ("input,i", po::value<std::string>(), "Input file")
         ("params,p", po::value<std::string>(), "Input parameters file")
         ("output,o", po::value<std::string>(), "Output file");
 
     po::variables_map vm;
-    po::parsed_options parsed =
-        po::command_line_parser(argc, argv)
-            .options(mainDesc).allow_unregistered().run();
-
-    po::store(parsed, vm);
+    po::store(po::parse_command_line(argc, argv, mainDesc), vm);
     po::notify(vm);
+
+    if (vm.count("version")) {
+        std::cout << version() << std::endl;
+        exit(0);
+    }
 
     if (taskType == "training") {
         mainDesc.add(trainDesc);
