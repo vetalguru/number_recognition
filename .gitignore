@@ -16,3 +16,6 @@ CMakeUserPresets.json
 BUILD
 build
 
+# Visual Studio files
+.vs
+
