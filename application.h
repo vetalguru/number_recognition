@@ -3,6 +3,8 @@
 #ifndef APPLICATION_H_
 #define APPLICATION_H_
 
+#include <string>
+
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
