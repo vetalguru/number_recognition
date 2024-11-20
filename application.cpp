@@ -4,10 +4,11 @@
 
 #include <iostream>
 #include <sstream>
-#include <string>
 
 #include "lib/include/helloworld.h"
+// NOLINTBEGIN
 #include "version.h"
+// NOLINTEND
 
 Application::Application(const int argc, const char* const argv[]) {
     parseCommandLine(argc, argv);
