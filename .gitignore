@@ -18,4 +18,10 @@ build
 
 # Visual Studio files
 .vs
+.vscode
+
+#MNIST data
+mnist_datasets_csv
+mnist_test.csv
+mnist_train.csv
 
