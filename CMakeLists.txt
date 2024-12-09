@@ -29,10 +29,14 @@ set(RECOGNITION_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(TESTS_DIR ${PROJECT_SOURCE_DIR}/tests)
 
 set(HEADERS_LIST ${CMAKE_BINARY_DIR}/version.h
-                 ${CMAKE_SOURCE_DIR}/application.h)
+                 ${CMAKE_SOURCE_DIR}/application.h
+                 ${CMAKE_SOURCE_DIR}/mnistdataitem.h
+                 ${CMAKE_SOURCE_DIR}/mnistdatareader.h)
 
 set(SOURCES_LIST ${CMAKE_SOURCE_DIR}/main.cpp
-                 ${CMAKE_SOURCE_DIR}/application.cpp)
+                 ${CMAKE_SOURCE_DIR}/application.cpp
+                 ${CMAKE_SOURCE_DIR}/mnistdataitem.cpp
+                 ${CMAKE_SOURCE_DIR}/mnistdatareader.cpp)
 
 include_directories(${RECOGNITION_LIBRARY_DIR}/include)
 
