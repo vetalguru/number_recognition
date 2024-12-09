@@ -1,6 +1,6 @@
 // Copyright 2024 Vitalii Shkibtan
 
-#include "mnistdataitem.h"
+#include "./mnistdataitem.h"
 
 #include <algorithm>
 #include <cassert>

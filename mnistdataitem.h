@@ -6,10 +6,10 @@
 #include <memory>
 
 class MnistDataItem {
-public:
+ public:
     const int kWidth  = 28;
     const int kHeight = 28;
-    const int kLength = kWidth * kHeight + 1; // bitmap and supposed value
+    const int kLength = kWidth * kHeight + 1;  // bitmap and supposed value
     const int kWrongValue = -1;
 
     MnistDataItem() = default;
@@ -17,7 +17,7 @@ public:
 
     MnistDataItem(const MnistDataItem&) = delete;
     MnistDataItem(MnistDataItem&&) = delete;
-                
+
     MnistDataItem& operator=(const MnistDataItem&) = delete;
     MnistDataItem& operator=(MnistDataItem&&) = delete;
 
@@ -27,7 +27,7 @@ public:
     int supposed() const noexcept;
     int& operator[](int index) const noexcept;
 
-private:
+ private:
     std::unique_ptr<int[]> m_data{new int[kLength]{0}};
 };
 
