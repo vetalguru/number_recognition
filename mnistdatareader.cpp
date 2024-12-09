@@ -1,12 +1,12 @@
 // Copyright 2024 Vitalii Shkibtan
 
-#include "mnistdatareader.h"
+#include "./mnistdatareader.h"
 
 #include <algorithm>
 #include <cassert>
 #include <sstream>
 
-#include "mnistdataitem.h"
+#include "./mnistdataitem.h"
 
 bool MnistDataReader::open(const std::string& path) noexcept {
     if (path.empty()) {
@@ -38,7 +38,8 @@ bool MnistDataReader::dataItem(int index, MnistDataItem& item) noexcept {
     return parseMnistLine(line, item);
 }
 
-bool MnistDataReader::readDataLine(const int index, std::string &line) noexcept {
+bool MnistDataReader::readDataLine(const int index,
+        std::string &line) noexcept {
     line.clear();
 
     std::string cur;
@@ -81,7 +82,7 @@ bool MnistDataReader::parseMnistLine(const std::string& line,
 void MnistDataReader::normalizeDataString(std::string &line) const noexcept {
     const char chars[] = {'\n', ' '};
 
-    for (const auto &ch : chars) { 
+    for (const auto &ch : chars) {
         line.erase(std::remove(line.begin(), line.end(), ch), line.cend());
     }
 }
