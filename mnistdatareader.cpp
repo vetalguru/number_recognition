@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cassert>
 #include <sstream>
+#include <string>
 
 #include "./mnistdataitem.h"
 
