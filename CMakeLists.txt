@@ -40,7 +40,7 @@ set(SOURCES_LIST ${CMAKE_SOURCE_DIR}/main.cpp
 
 include_directories(${RECOGNITION_LIBRARY_DIR}/include)
 
-find_package(Boost 1.74.0 COMPONENTS program_options)
+find_package(Boost 1.74.0 COMPONENTS program_options REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   set(BOOST_LIBS ${Boost_LIBRARIES})
