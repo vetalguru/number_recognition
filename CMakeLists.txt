@@ -27,6 +27,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(RECOGNITION_LIBRARY_NAME recognition)
 set(RECOGNITION_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(TESTS_DIR ${PROJECT_SOURCE_DIR}/tests)
+set(MNIST_ZIP ${CMAKE_SOURCE_DIR}/data/mnist/mnist_datasets_csv.zip)
+set(MNIST_OUTPUT_DIR ${CMAKE_BINARY_DIR}/mnist)
 
 set(HEADERS_LIST ${CMAKE_BINARY_DIR}/version.h
                  ${CMAKE_SOURCE_DIR}/application.h)
@@ -55,5 +57,18 @@ target_link_libraries(${PROJECT_NAME}
   ${RECOGNITION_LIBRARY_NAME}
   ${Boost_LIBRARIES}
 )
+
+if(NOT EXISTS ${MNIST_OUTPUT_DIR})
+  message(STATUS "Extracting MNIST dataset...")
+
+  file(ARCHIVE_EXTRACT
+    INPUT ${MNIST_ZIP}
+    DESTINATION ${MNIST_OUTPUT_DIR}
+  )
+
+  message(STATUS "MNIST dataset extracted to ${MNIST_OUTPUT_DIR}")
+else()
+  message(STATUS "MNIST dataset already extracted to ${MNIST_OUTPUT_DIR}")
+endif()
 
 add_subdirectory(${TESTS_DIR})
