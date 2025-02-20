@@ -4,6 +4,7 @@
 
 #include <complex>
 #include <stdexcept>
+#include <vector>
 
 
 Neuron::Neuron(int aInputs)
