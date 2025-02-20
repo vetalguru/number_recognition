@@ -18,10 +18,8 @@
 #include "lib/include/perceptron.h"
 
 
+// Unnamed namespace to restrict the scope of constants to this translation unit
 namespace {
-const char kTrainFileParam[] = "train-csv-file";
-const char kTestFileParam[] = "test-csv-file";
-
 constexpr int kNumClasses = 10;      // Numbers from 0 to 9
 constexpr int kImageSize = 28 * 28;  // Images 28 px x 28 px
 }
@@ -47,9 +45,9 @@ void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
 
     po::options_description trainDesc("Training options:");
     trainDesc.add_options()
-        ("TRAIN_FILE_PARAM,t", po::value<std::string>(),
+        ("train-csv-file,t", po::value<std::string>(),
             "Path to train csv file (mnist_train.csv)")
-        ("TEST_FILE_PARAM,c", po::value<std::string>(),
+        ("test-csv-file,c", po::value<std::string>(),
             "Path to data file csv (mnist_test.csv)");
 
     po::options_description recDesc("Recognition options");
@@ -90,13 +88,13 @@ void Application::initTrainingMode(const po::variables_map& aVm) {
     std::string training_file;
     std::string test_file;
 
-    if (aVm.count(kTrainFileParam)) {
-        training_file = aVm[kTrainFileParam].as<std::string>();
+    if (aVm.count("train-csv-file")) {
+        training_file = aVm["train-csv-file"].as<std::string>();
         std::cout << "Train file name: " << training_file << std::endl;
     }
 
-    if (aVm.count(kTestFileParam)) {
-        test_file = aVm[kTestFileParam].as<std::string>();
+    if (aVm.count("test-csv-file")) {
+        test_file = aVm["test-csv-file"].as<std::string>();
         std::cout << "Test file name: "<< test_file << std::endl;
     }
 
