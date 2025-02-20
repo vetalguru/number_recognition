@@ -20,8 +20,8 @@ jobs:
       with:
         python-version: '3.12'
    
-    - name: Checkers
-      run: pip install cpplint && cpplint --recursive .
+    - name: Install and run cpplint
+      run: pip install cpplint && cpplint --recursive --exclude=build .
  
     - name: Boost
       run: sudo apt-get update && sudo apt-get install -yq libboost-program-options-dev
