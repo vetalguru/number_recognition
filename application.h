@@ -1,17 +1,17 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#ifndef APPLICATION_H_
+#define APPLICATION_H_
 
 #include <string>
 #include <vector>
 
 
 namespace boost {
-    namespace program_options {
-        class variables_map;
-    }
-}
+namespace program_options {
+class variables_map;
+}  // namespace program_options
+}  // namespace boost
 
 namespace po = boost::program_options;
 
@@ -37,8 +37,10 @@ class Application {
         const std::string& aMnistTestFile);
 
     bool loadMnistCsv(const std::string& aFileName,
+        // NOLINTNEXTLINE(runtime/references)
         std::vector<std::vector<double>>& aInputs,
+        // NOLINTNEXTLINE(runtime/references)
         std::vector<std::vector<double>>& aTargets) const;
 };
 
-#endif  // APPLICATION_H
+#endif  // APPLICATION_H_
