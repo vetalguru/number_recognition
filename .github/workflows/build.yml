@@ -22,9 +22,18 @@ jobs:
    
     - name: Install and run cpplint
       run: pip install cpplint && cpplint --recursive --exclude=build .
- 
+
+    - name: Update apt-get
+      run: sudo apt-get update
+
+    - name: Install GCC
+      run: sudo apt-get install -yq g++
+
+    - name: Install CMake
+      run: sudo apt-get install -yq cmake
+
     - name: Boost
-      run: sudo apt-get update && sudo apt-get install -yq libboost-program-options-dev
+      run: sudo apt-get install -yq libboost-program-options-dev
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
