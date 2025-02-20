@@ -1,6 +1,6 @@
-// Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
+// Copyright (c) 2024-2025 Vitalii Shkibtan. All rights reserved.
 
-#include "application.h"
+#include "./application.h"
 
 
 int main(int argc, char* argv[]) {

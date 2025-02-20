@@ -2,30 +2,35 @@ enable_testing()
 
 include(FetchContent)
 
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+set(BUILD_GTEST ON CACHE BOOL "" FORCE)
+
 FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
     GIT_TAG v1.15.2
 )
-
-set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
-set(BUILD_GTEST ON CACHE BOOL "" FORCE)
-
 FetchContent_MakeAvailable(googletest)
 
-add_library(GTest::GTest INTERFACE IMPORTED)
-target_link_libraries(GTest::GTest INTERFACE gtest_main)
-
-#===============================
 add_executable(
     test_gettestnumber
-    test_gettestnumber.cpp)
+    test_gettestnumber.cpp
+)
+
+target_include_directories(
+    test_gettestnumber
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/lib/include
+)
 
 target_link_libraries(
     test_gettestnumber
-    GTest::GTest recognition)
+    PRIVATE
+    GTest::gtest_main
+    ${RECOGNITION_LIBRARY_NAME}
+)
 
 add_test(
     NAME test_gettestnumber
-    COMMAND test_gettestnumber)
-
+    COMMAND test_gettestnumber
+)

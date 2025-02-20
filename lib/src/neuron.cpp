@@ -1,14 +1,15 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#include "neuron.h"
+#include "./neuron.h"
 
 #include <complex>
 #include <stdexcept>
 
+
 Neuron::Neuron(int aInputs)
- : m_weights(aInputs, 0.0)
- , m_bias(0.0) {
- }
+    : m_weights(aInputs, 0.0)
+    , m_bias(0.0) {
+}
 
 double Neuron::bias() const noexcept {
     return m_bias;
@@ -34,7 +35,8 @@ double Neuron::output(const std::vector<double>& aInput) const {
     return activate(sum(aInput));
 }
 
-void Neuron::updateWeights(const std::vector<double>& aInputs, double aLearningRate, double delta) {
+void Neuron::updateWeights(const std::vector<double>& aInputs,
+    double aLearningRate, double delta) {
     for (size_t i = 0; i < m_weights.size(); ++i) {
         setWeight(i, weight(i) + aLearningRate * delta * (aInputs[i]));
     }
