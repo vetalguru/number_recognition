@@ -53,6 +53,7 @@ void NeuroNetwork::train(const std::vector<std::vector<double>>& aInputData,
         for (size_t sample = 0; sample < aInputData.size(); ++sample) {
             // 1 Stage: Forward pass
             std::vector<std::vector<double>> activations =
+                // NOLINTNEXTLINE(build/include_what_you_use)
                 forward(aInputData[sample]);
 
             // 2 Stage: Backpropagation(calculate errors and gradients)

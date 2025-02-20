@@ -6,6 +6,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "boost/program_options.hpp"
 
@@ -17,11 +19,11 @@
 
 
 namespace {
-    const std::string kTrainFileParam{"train-csv-file"};
-    const std::string kTestFileParam{"test-csv-file"};
+const char kTrainFileParam[] = "train-csv-file";
+const char kTestFileParam[] = "test-csv-file";
 
-    constexpr int kNumClasses = 10;      // Numbers from 0 to 9
-    constexpr int kImageSize = 28 * 28;  // Images 28 px x 28 px
+constexpr int kNumClasses = 10;      // Numbers from 0 to 9
+constexpr int kImageSize = 28 * 28;  // Images 28 px x 28 px
 }
 
 std::string Application::version() const {
