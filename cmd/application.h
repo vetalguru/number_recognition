@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#ifndef APPLICATION_H_
-#define APPLICATION_H_
+#ifndef CMD_APPLICATION_H_
+#define CMD_APPLICATION_H_
 
 #include <string>
 #include <vector>
@@ -43,4 +43,4 @@ class Application {
         std::vector<std::vector<double>>& aTargets) const;
 };
 
-#endif  // APPLICATION_H_
+#endif  // CMD_APPLICATION_H_

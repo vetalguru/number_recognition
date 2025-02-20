@@ -27,14 +27,15 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(RECOGNITION_LIBRARY_NAME recognition)
 set(RECOGNITION_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(TESTS_DIR ${PROJECT_SOURCE_DIR}/tests)
+set(CMD_DIR ${CMAKE_SOURCE_DIR}/cmd)
 set(MNIST_ZIP ${CMAKE_SOURCE_DIR}/data/mnist/mnist_datasets_csv.zip)
 set(MNIST_OUTPUT_DIR ${CMAKE_BINARY_DIR}/mnist)
 
 set(HEADERS_LIST ${CMAKE_BINARY_DIR}/version.h
-                 ${CMAKE_SOURCE_DIR}/application.h)
+                 ${CMD_DIR}/application.h)
 
-set(SOURCES_LIST ${CMAKE_SOURCE_DIR}/main.cpp
-                 ${CMAKE_SOURCE_DIR}/application.cpp)
+set(SOURCES_LIST ${CMD_DIR}/main.cpp
+                 ${CMD_DIR}/application.cpp)
 
 find_package(Boost 1.74.0 COMPONENTS program_options REQUIRED)
 if (NOT Boost_FOUND)
@@ -51,6 +52,7 @@ target_include_directories(
   ${CMAKE_BINARY_DIR}
   ${Boost_INCLUDE_DIRS}
   ${RECOGNITION_LIBRARY_DIR}/include
+  ${CMD_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME}
