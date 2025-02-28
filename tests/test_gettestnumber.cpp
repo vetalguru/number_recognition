@@ -2,7 +2,10 @@
 
 #include <gtest/gtest.h>
 
+#include <string>
+
 #include "include/helloworld.h"
+
 
 constexpr int kTestNumber = 42;
 
@@ -19,7 +22,8 @@ TEST(GetTestNumber, GetTestNumberLogInfoStream) {
     output = testing::internal::GetCapturedStdout();
 
     EXPECT_NE(std::string::npos, output.find("INFO"));
-    EXPECT_NE(std::string::npos, output.find("GetTestNumber() called with result: "));
+    EXPECT_NE(std::string::npos, output.find(
+        "GetTestNumber() called with result: "));
     EXPECT_NE(std::string::npos, output.find(std::to_string(kTestNumber)));
     EXPECT_EQ(kTestNumber, testNumber);
 }
