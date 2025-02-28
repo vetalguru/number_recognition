@@ -19,6 +19,9 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
+
+    - name: Update Git Submodules
+      run: git submodule update --init --recursive
    
     - name: Install and run cpplint
       run: pip install cpplint && cpplint --recursive --exclude=build .
