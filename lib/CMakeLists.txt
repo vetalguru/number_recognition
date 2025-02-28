@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(SOURCES_LIST src/helloworld.cpp
-                 src/perceptron.cpp
-                 src/neuron.cpp)
+set(SOURCES_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/helloworld.cpp
+                 ${CMAKE_CURRENT_SOURCE_DIR}/src/perceptron.cpp
+                 ${CMAKE_CURRENT_SOURCE_DIR}/src/neuron.cpp)
 
 add_library(
     ${RECOGNITION_LIBRARY_NAME}
@@ -19,5 +19,6 @@ add_library(
 target_include_directories(
     ${RECOGNITION_LIBRARY_NAME}
     PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/submodule/logger
 )

@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#include "./neuron.h"
+#include "include/neuron.h"
 
 #include <complex>
 #include <stdexcept>

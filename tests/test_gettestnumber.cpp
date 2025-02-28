@@ -2,8 +2,24 @@
 
 #include <gtest/gtest.h>
 
-#include "../lib/include/helloworld.h"
+#include "include/helloworld.h"
 
-TEST(GetTestNumber, SimpleTest) {
-    EXPECT_EQ(42, GetTestNumber());
+constexpr int kTestNumber = 42;
+
+TEST(GetTestNumber, GetTestNumber) {
+    EXPECT_EQ(kTestNumber, GetTestNumber());
+}
+
+TEST(GetTestNumber, GetTestNumberLogInfoStream) {
+    std::string output;
+    int testNumber;
+
+    testing::internal::CaptureStdout();
+    testNumber = GetTestNumber();
+    output = testing::internal::GetCapturedStdout();
+
+    EXPECT_NE(std::string::npos, output.find("INFO"));
+    EXPECT_NE(std::string::npos, output.find("GetTestNumber() called with result: "));
+    EXPECT_NE(std::string::npos, output.find(std::to_string(kTestNumber)));
+    EXPECT_EQ(kTestNumber, testNumber);
 }

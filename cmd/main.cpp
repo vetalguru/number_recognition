@@ -2,7 +2,7 @@
 
 #include "./application.h"
 
-#include "../lib/include/logger.h"
+#include "include/logger.hpp"
 
 
 int main(int argc, char* argv[]) {

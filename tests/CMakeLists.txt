@@ -20,7 +20,7 @@ add_executable(
 target_include_directories(
     test_gettestnumber
     PRIVATE
-    ${CMAKE_SOURCE_DIR}/lib/include
+    ${CMAKE_SOURCE_DIR}/lib
 )
 
 target_link_libraries(

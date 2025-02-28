@@ -1,0 +1,3 @@
+[submodule "lib/submodule/logger"]
+	path = lib/submodule/logger
+	url = https://github.com/vetalguru/logger.git

@@ -5,20 +5,7 @@ project(numrec)
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
 
-execute_process(
-  COMMAND git rev-parse --short HEAD
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  OUTPUT_VARIABLE GIT_COMMIT_HASH
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-set(VERSION_BUILD ${GIT_COMMIT_HASH})
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/version.h.in
-  ${CMAKE_BINARY_DIR}/version.h
-  @ONLY
-)
+set(BUILD_TESTS OFF CACHE BOOL "Disable logger tests" FORCE)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -37,12 +24,28 @@ set(HEADERS_LIST ${CMAKE_BINARY_DIR}/version.h
 set(SOURCES_LIST ${CMD_DIR}/main.cpp
                  ${CMD_DIR}/application.cpp)
 
+execute_process(
+  COMMAND git rev-parse --short HEAD
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+set(VERSION_BUILD ${GIT_COMMIT_HASH})
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/version.h.in
+  ${CMAKE_BINARY_DIR}/version.h
+  @ONLY
+)
+
 find_package(Boost 1.74.0 COMPONENTS program_options REQUIRED)
 if (NOT Boost_FOUND)
   message(FATAL_ERROR "BOOST LIBRARY NOT FOUND!!!")
 endif()
 
 add_subdirectory(${RECOGNITION_LIBRARY_DIR})
+add_subdirectory(${RECOGNITION_LIBRARY_DIR}/submodule/logger EXCLUDE_FROM_ALL)
 
 add_executable(${PROJECT_NAME} ${SOURCES_LIST} ${HEADERS_LIST})
 
@@ -51,13 +54,17 @@ target_include_directories(
   PRIVATE
   ${CMAKE_BINARY_DIR}
   ${Boost_INCLUDE_DIRS}
-  ${RECOGNITION_LIBRARY_DIR}/include
+  ${RECOGNITION_LIBRARY_DIR}
   ${CMD_DIR}
+  ${RECOGNITION_LIBRARY_DIR}/submodule/logger
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(
+  ${PROJECT_NAME}
+  PRIVATE
   ${RECOGNITION_LIBRARY_NAME}
   ${Boost_LIBRARIES}
+  logger
 )
 
 if(NOT EXISTS ${MNIST_OUTPUT_DIR})
