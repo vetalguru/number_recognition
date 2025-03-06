@@ -12,22 +12,23 @@ class Neuron {
     double bias() const noexcept;
     void setBias(double aBias) noexcept;
 
-    double weight(int aIndex) const;
-    void setWeight(int aIndex, double aValue);
-    std::vector<double>& weights();
+    double weight(size_t aIndex) const noexcept;
+    void setWeight(size_t aIndex, double aValue) noexcept;
+    std::vector<double>& weights() noexcept;
+    const std::vector<double>& weights() const noexcept;
 
-    double output(const std::vector<double>& aInput) const;
+    double output(const std::vector<double>& aInput) const noexcept;
     void updateWeights(const std::vector<double>& aInputs,
-        double aLearningRate, double delta);
+        double aLearningRate, double delta) noexcept;
 
-    double activate(double aValue) const;
-    double activateDerivative(double aValue) const;
+    double activate(double aValue) const noexcept;
+    double activateDerivative(double aValue) const noexcept;
 
  private:
-    double sigmoid(double aValue) const;
-    double sigmoidDerivative(double aValue) const;
+    double sigmoid(double aValue) const noexcept;
+    double sigmoidDerivative(double aValue) const noexcept;
 
-    double sum(const std::vector<double>& aInputs) const;
+    double sum(const std::vector<double>& aInputs) const noexcept;
 
  private:
     std::vector<double> m_weights;

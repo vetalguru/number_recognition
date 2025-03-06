@@ -5,11 +5,15 @@
 
 #include <vector>
 
-#include "./neuron.h"
+#include "include/neuron.h"
 
-class NeuroNetwork {
+class Perceptron {
  public:
-    explicit NeuroNetwork(const std::vector<int> aLayers);
+    Perceptron() = default;
+    explicit Perceptron(const std::vector<int>& aLayers);
+
+    bool initializeNetwork(const std::vector<int>& aLayers);
+    bool isConfigured() const;
 
     // NOLINTNEXTLINE(build/include_what_you_use)
     std::vector<std::vector<double>> forward(
@@ -19,8 +23,20 @@ class NeuroNetwork {
                 const std::vector<std::vector<double>>& aTargetData,
                 int epochs, double aLearningRate);
 
+    bool isTrained() const;
+
+    const std::vector<std::vector<Neuron>>& layers() const;
+
+    bool setNeuronWeights(size_t aLayerIndex, size_t aNeuronIndex,
+        const std::vector<double>& aWeights);
+
+    bool setNeuronBias(size_t aLayerIndex, size_t aNeuronIndex,
+        double aBias);
+
  private:
     std::vector<std::vector<Neuron>> m_layers;
+    bool m_isConfigured = false;
+    bool m_isTrained = false;
 };
 
 #endif  // LIB_INCLUDE_PERCEPTRON_H_

@@ -39,7 +39,7 @@ configure_file(
   @ONLY
 )
 
-find_package(Boost 1.74.0 COMPONENTS program_options REQUIRED)
+find_package(Boost 1.74.0 COMPONENTS program_options json REQUIRED)
 if (NOT Boost_FOUND)
   message(FATAL_ERROR "BOOST LIBRARY NOT FOUND!!!")
 endif()
