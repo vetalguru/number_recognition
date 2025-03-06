@@ -2,9 +2,9 @@
 
 #include "cmd/application.h"
 
-#include <algorithm>  // NOLINT
+#include <algorithm>
 #include <iostream>  // For help and version output
-#include <filesystem>
+#include <filesystem>  // NOLINT(build/c++17)
 #include <fstream>
 #include <numeric>
 #include <sstream>
