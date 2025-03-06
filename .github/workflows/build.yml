@@ -15,14 +15,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-   
+
     - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
 
     - name: Update Git Submodules
       run: git submodule update --init --recursive
-   
+
     - name: Install and run cpplint
       run: pip install cpplint && cpplint --recursive --exclude=build .
 
@@ -36,7 +36,9 @@ jobs:
       run: sudo apt-get install -yq cmake
 
     - name: Boost
-      run: sudo apt-get install -yq libboost-program-options-dev
+      run: sudo apt-get install -yq
+        libboost-program-options-dev
+        libboost-json-dev
 
     - name: Configure CMake
       run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
