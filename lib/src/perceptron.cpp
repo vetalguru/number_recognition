@@ -8,30 +8,63 @@
 #include <stdexcept>
 #include <vector>
 
+#include "include/logger.hpp"
 
-NeuroNetwork::NeuroNetwork(const std::vector<int> aLayers) {
+
+Perceptron::Perceptron(const std::vector<int>& aLayers) {
+    initializeNetwork(aLayers);
+}
+
+bool Perceptron::initializeNetwork(const std::vector<int>& aLayers) {
+    m_isConfigured = false;
+    m_isTrained = false;
+    m_layers.clear();
+
+    if (aLayers.size() < 2) {
+        LOG_ERROR << "Network must have at least input and output layers";
+        return false;
+    }
+
     std::random_device rd;
     std::mt19937 gen(rd());
     std::normal_distribution<double> dist(0.0, 1.0);
 
-    m_layers.resize(aLayers.size() - 1);
-    for (size_t i = 1; i < aLayers.size(); ++i) {
-        m_layers[i - 1].resize(aLayers[i], Neuron(aLayers[i - 1]));
-        for (auto& neuron : m_layers[i - 1]) {
-            for (auto& weight : neuron.weights()) {
-                weight = dist(gen);
+    m_layers.resize(aLayers.size() - 1);  // Without first (input) layer
+    for (size_t layerIndex = 1; layerIndex < aLayers.size(); ++layerIndex) {
+        m_layers[layerIndex - 1].resize(aLayers[layerIndex],
+            Neuron(aLayers[layerIndex - 1]));
+
+        for (auto& neuron : m_layers[layerIndex - 1]) {
+            for (size_t neuronIndex = 0; neuronIndex < neuron.weights().size();
+                    ++neuronIndex) {
+                neuron.setWeight(neuronIndex, dist(gen));
             }
+
             neuron.setBias(dist(gen));
         }
     }
+
+    LOG_INFO << "Network configured: ";
+    LOG_INFO << "Layer " << 0 << ": " << aLayers[0] << " neurons";
+    for (size_t i = 0; i < m_layers.size(); ++i) {
+        LOG_INFO << "Layer " << i + 1 << ": " << m_layers[i].size()
+            << " neurons";
+    }
+
+    m_isConfigured = true;
+    return true;
 }
 
-std::vector<std::vector<double>> NeuroNetwork::forward(
+bool Perceptron::isConfigured() const {
+    return m_isConfigured;
+}
+
+std::vector<std::vector<double>> Perceptron::forward(
         const std::vector<double>& aInput) const {
     std::vector<std::vector<double>> activations;
     activations.push_back(aInput);  // Push input layer
 
-    for (auto& layer : m_layers) {
+    for (const auto& layer : m_layers) {
         std::vector<double> newActivations;
         for (auto& neuron : layer) {
             newActivations.push_back(neuron.output(activations.back()));
@@ -42,9 +75,16 @@ std::vector<std::vector<double>> NeuroNetwork::forward(
     return activations;
 }
 
-void NeuroNetwork::train(const std::vector<std::vector<double>>& aInputData,
+void Perceptron::train(const std::vector<std::vector<double>>& aInputData,
             const std::vector<std::vector<double>>& aTargetData,
             int epochs, double aLearningRate) {
+    m_isTrained = false;
+
+    if (!m_isConfigured) {
+        LOG_ERROR << "Network is not configured successfully";
+        return;
+    }
+
     // For all epochs
     for (int epoch = 0; epoch < epochs; ++epoch) {
         double totalError = 0.0;
@@ -95,7 +135,59 @@ void NeuroNetwork::train(const std::vector<std::vector<double>>& aInputData,
             }
         }
 
-        std::cout << "Epoch " << epoch + 1
-            << ", Error: " << totalError / aInputData.size() << std::endl;
+        LOG_INFO << "Epoch " << epoch + 1
+            << ", Error: " << totalError / aInputData.size();
     }
+
+    m_isTrained = true;
+}
+
+bool Perceptron::isTrained() const {
+    return m_isTrained;
+}
+
+const std::vector<std::vector<Neuron>>& Perceptron::layers() const {
+    return m_layers;
+}
+
+bool Perceptron::setNeuronWeights(size_t aLayerIndex, size_t aNeuronIndex,
+    const std::vector<double>& aWeights) {
+    if (aLayerIndex >= m_layers.size()) {
+        LOG_ERROR << "Layer index is out of indexes range";
+        return false;
+    }
+
+    if (aNeuronIndex >= m_layers[aLayerIndex].size()) {
+        LOG_ERROR << "Invalid neuron index for layer " << aLayerIndex + 1;
+        return false;
+    }
+
+    if (aWeights.size() !=
+            m_layers[aLayerIndex][aNeuronIndex].weights().size()) {
+        LOG_ERROR << "The size of the weights vector does not "
+            << "match the number of weights in the neuron";
+        return false;
+    }
+
+    for (size_t i = 0; i < aWeights.size(); ++i) {
+        m_layers[aLayerIndex][aNeuronIndex].setWeight(i, aWeights[i]);
+    }
+
+    return true;
+}
+
+bool Perceptron::setNeuronBias(size_t aLayerIndex, size_t aNeuronIndex,
+    double aBias) {
+    if (aLayerIndex >= m_layers.size()) {
+        LOG_ERROR << "Layer index is out of indexes range";
+        return false;
+    }
+
+    if (aNeuronIndex >= m_layers[aLayerIndex].size()) {
+        LOG_ERROR << "Invalid neuron index for layer " << aLayerIndex + 1;
+        return false;
+    }
+
+    m_layers[aLayerIndex][aNeuronIndex].setBias(aBias);
+    return true;
 }
