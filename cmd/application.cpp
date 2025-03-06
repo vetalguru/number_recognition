@@ -2,7 +2,7 @@
 
 #include "cmd/application.h"
 
-#include <algorithm>
+#include <algorithm>  // NOLINT(readability/nolint)
 #include <iostream>  // For help and version output
 #include <filesystem>
 #include <fstream>

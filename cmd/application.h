@@ -59,7 +59,7 @@ class Application {
 
     bool loadModelFromJson(
         const std::string& aFileName,
-        Perceptron& aNetwork) const;
+        Perceptron& aNetwork) const;  // NOLINT(runtime/references)
 };
 
 #endif  // CMD_APPLICATION_H_
