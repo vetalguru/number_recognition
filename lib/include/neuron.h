@@ -7,7 +7,13 @@
 
 class Neuron {
  public:
-    explicit Neuron(int aNumInputs);
+    enum class ActivationFunction {
+        SIGMOID,
+        RELU
+    };
+
+ public:
+    Neuron(int aNumInputs, ActivationFunction aFunction);
 
     double bias() const noexcept;
     void setBias(double aBias) noexcept;
@@ -28,11 +34,15 @@ class Neuron {
     double sigmoid(double aValue) const noexcept;
     double sigmoidDerivative(double aValue) const noexcept;
 
+    double relu(double aValue) const noexcept;
+    double reluDerivative(double aValue) const noexcept;
+
     double sum(const std::vector<double>& aInputs) const noexcept;
 
  private:
     std::vector<double> m_weights;
     double m_bias;
+    ActivationFunction m_function;
 };
 
 #endif  // LIB_INCLUDE_NEURON_H_
