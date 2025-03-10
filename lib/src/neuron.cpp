@@ -2,14 +2,16 @@
 
 #include "include/neuron.h"
 
+#include <algorithm>
 #include <complex>
 #include <stdexcept>
 #include <vector>
 
 
-Neuron::Neuron(int aInputs)
+Neuron::Neuron(int aInputs, ActivationFunction aFunction)
     : m_weights(aInputs, 0.0)
-    , m_bias(0.0) {
+    , m_bias(0.0)
+    , m_function(aFunction) {
 }
 
 double Neuron::bias() const noexcept {
@@ -61,20 +63,55 @@ void Neuron::updateWeights(const std::vector<double>& aInputs,
 }
 
 double Neuron::activate(double aValue) const noexcept {
-    return sigmoid(aValue);
+    double result;
+
+    switch (m_function) {
+        case ActivationFunction::SIGMOID: {
+            result = sigmoid(aValue);
+            break;
+        }
+        case ActivationFunction::RELU:
+        default: {
+            result = relu(aValue);
+            break;
+        }
+    }
+
+    return result;
 }
 
 double Neuron::sigmoid(double aValue) const noexcept {
     return 1.0 / (1.0 + std::exp(-aValue));
 }
 
+double Neuron::relu(double aValue) const noexcept {
+    return std::max(0.0, aValue);
+}
+
 double Neuron::activateDerivative(double aValue) const noexcept {
-    return sigmoidDerivative(aValue);
+    double result;
+
+    switch (m_function) {
+        case ActivationFunction::SIGMOID:
+            result = sigmoidDerivative(aValue);
+            break;
+        case ActivationFunction::RELU:
+        default: {
+            result = reluDerivative(aValue);
+            break;
+        }
+    }
+
+    return result;
 }
 
 double Neuron::sigmoidDerivative(double aValue) const noexcept {
     const double sig = sigmoid(aValue);
     return sig * (1 - sig);
+}
+
+double Neuron::reluDerivative(double aValue) const noexcept {
+    return (aValue > 0) ? 1.0 : 0.0;
 }
 
 double Neuron::sum(const std::vector<double>& aInputs) const noexcept {

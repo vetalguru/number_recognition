@@ -525,7 +525,7 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
        0.05             🏎 very fast        ⚠ ~97%     Fluctuations
        0.1              ⚠  fast            ❌ ~90%     Unstable
     */
-    constexpr double kLearningRate = 0.0075;
+    constexpr double kLearningRate = 0.001;
 
     /**
        Net architecture       Speed       Accuracy
@@ -535,7 +535,9 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
 
     LOG_INFO << "Epoches: " << kEpoch;
     LOG_INFO << "Learning rate: " << kLearningRate;
-    Perceptron network({kImageSize, 256, 128, kNumClasses});
+
+    auto function = Neuron::ActivationFunction::RELU;
+    Perceptron network({kImageSize, 256, 128, kNumClasses}, function);
 
     // Load train data
     std::vector<std::vector<double>> trainInputs;

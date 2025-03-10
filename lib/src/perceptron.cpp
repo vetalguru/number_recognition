@@ -11,11 +11,13 @@
 #include "include/logger.hpp"
 
 
-Perceptron::Perceptron(const std::vector<int>& aLayers) {
-    initializeNetwork(aLayers);
+Perceptron::Perceptron(const std::vector<int>& aLayers,
+    Neuron::ActivationFunction aFunction) {
+    initializeNetwork(aLayers, aFunction);
 }
 
-bool Perceptron::initializeNetwork(const std::vector<int>& aLayers) {
+bool Perceptron::initializeNetwork(const std::vector<int>& aLayers,
+    Neuron::ActivationFunction aFunction) {
     m_isConfigured = false;
     m_isTrained = false;
     m_layers.clear();
@@ -32,7 +34,7 @@ bool Perceptron::initializeNetwork(const std::vector<int>& aLayers) {
     m_layers.resize(aLayers.size() - 1);  // Without first (input) layer
     for (size_t layerIndex = 1; layerIndex < aLayers.size(); ++layerIndex) {
         m_layers[layerIndex - 1].resize(aLayers[layerIndex],
-            Neuron(aLayers[layerIndex - 1]));
+            Neuron(aLayers[layerIndex - 1], aFunction));
 
         for (auto& neuron : m_layers[layerIndex - 1]) {
             for (size_t neuronIndex = 0; neuronIndex < neuron.weights().size();

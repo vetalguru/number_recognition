@@ -10,9 +10,13 @@
 class Perceptron {
  public:
     Perceptron() = default;
-    explicit Perceptron(const std::vector<int>& aLayers);
+    Perceptron(const std::vector<int>& aLayers,
+        Neuron::ActivationFunction aFunction =
+            Neuron::ActivationFunction::SIGMOID);
 
-    bool initializeNetwork(const std::vector<int>& aLayers);
+    bool initializeNetwork(const std::vector<int>& aLayers,
+        Neuron::ActivationFunction aFunction =
+            Neuron::ActivationFunction::SIGMOID);
     bool isConfigured() const;
 
     // NOLINTNEXTLINE(build/include_what_you_use)
