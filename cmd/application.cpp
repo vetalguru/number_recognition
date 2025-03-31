@@ -20,7 +20,6 @@
 #include "boost/json.hpp"
 
 #include "include/logger.hpp"
-#include "lib/include/helloworld.h"
 
 
 // Unnamed namespace to restrict the scope of constants to this translation unit

@@ -6,8 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(SOURCES_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/helloworld.cpp
-                 ${CMAKE_CURRENT_SOURCE_DIR}/src/perceptron.cpp
+set(SOURCES_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/perceptron.cpp
                  ${CMAKE_CURRENT_SOURCE_DIR}/src/neuron.cpp)
 
 add_library(
