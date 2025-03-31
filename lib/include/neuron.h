@@ -4,6 +4,7 @@
 #define LIB_INCLUDE_NEURON_H_
 
 #include <vector>
+#include "include/logger.hpp"
 
 class Neuron {
  public:
@@ -21,7 +22,7 @@ class Neuron {
     double weight(size_t aIndex) const noexcept;
     void setWeight(size_t aIndex, double aValue) noexcept;
     std::vector<double>& weights() noexcept;
-    const std::vector<double>& weights() const noexcept;
+    const std::vector<double>& cweights() const noexcept;
 
     double output(const std::vector<double>& aInput) const noexcept;
     void updateWeights(const std::vector<double>& aInputs,

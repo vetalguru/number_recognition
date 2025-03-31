@@ -42,7 +42,7 @@ std::vector<double>& Neuron::weights() noexcept {
     return m_weights;
 }
 
-const std::vector<double>& Neuron::weights() const noexcept {
+const std::vector<double>& Neuron::cweights() const noexcept {
     return m_weights;
 }
 
