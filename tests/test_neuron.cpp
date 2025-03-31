@@ -2,7 +2,9 @@
 
 #include <gtest/gtest.h>
 
-#include <limits.h>
+#include <climits>
+
+#include <vector>
 
 #include "include/neuron.h"
 
