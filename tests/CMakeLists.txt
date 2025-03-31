@@ -12,17 +12,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-add_executable(
-    test_gettestnumber
-    test_gettestnumber.cpp
-)
-
-target_include_directories(
-    test_gettestnumber
-    PRIVATE
-    ${CMAKE_SOURCE_DIR}/lib
-)
-
+add_executable(test_gettestnumber test_gettestnumber.cpp)
+target_include_directories(test_gettestnumber PRIVATE ${CMAKE_SOURCE_DIR}/lib)
 target_link_libraries(
     test_gettestnumber
     PRIVATE
@@ -30,7 +21,14 @@ target_link_libraries(
     ${RECOGNITION_LIBRARY_NAME}
 )
 
-add_test(
-    NAME test_gettestnumber
-    COMMAND test_gettestnumber
+add_executable(test_neuron test_neuron.cpp)
+target_include_directories(test_neuron PRIVATE ${CMAKE_SOURCE_DIR/lib})
+target_link_libraries(
+    test_neuron
+    PRIVATE
+    GTest::gtest_main
+    ${RECOGNITION_LIBRARY_NAME}
 )
+
+add_test(NAME test_gettestnumber COMMAND test_gettestnumber)
+add_test(NAME test_neuron COMMAND test_neuron)

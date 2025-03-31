@@ -37,7 +37,7 @@ bool Perceptron::initializeNetwork(const std::vector<int>& aLayers,
             Neuron(aLayers[layerIndex - 1], aFunction));
 
         for (auto& neuron : m_layers[layerIndex - 1]) {
-            for (size_t neuronIndex = 0; neuronIndex < neuron.weights().size();
+            for (size_t neuronIndex = 0; neuronIndex < neuron.cweights().size();
                     ++neuronIndex) {
                 neuron.setWeight(neuronIndex, dist(gen));
             }
@@ -116,7 +116,7 @@ void Perceptron::train(const std::vector<std::vector<double>>& aInputData,
                         // hidden layers
                         double error = 0.0;
                         for (size_t k = 0; k < m_layers[i + 1].size(); ++k) {
-                            const auto& weights = m_layers[i + 1][k].weights();
+                            const auto& weights = m_layers[i + 1][k].cweights();
                             if (j < weights.size()) {
                                 error += deltas[i + 1][k] * weights[j];
                             }
@@ -165,7 +165,7 @@ bool Perceptron::setNeuronWeights(size_t aLayerIndex, size_t aNeuronIndex,
     }
 
     if (aWeights.size() !=
-            m_layers[aLayerIndex][aNeuronIndex].weights().size()) {
+            m_layers[aLayerIndex][aNeuronIndex].cweights().size()) {
         LOG_ERROR << "The size of the weights vector does not "
             << "match the number of weights in the neuron";
         return false;

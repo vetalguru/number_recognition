@@ -343,7 +343,7 @@ bool Application::saveModelToJson(const std::string& aFileName,
                 neuronJson["bias"] = neuron.bias();
                 neuronJson["weights"] = boost::json::array();
 
-                for (const auto& weight : neuron.weights()) {
+                for (const auto& weight : neuron.cweights()) {
                     neuronJson["weights"].as_array().emplace_back(weight);
                 }
 
