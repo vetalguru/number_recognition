@@ -13,12 +13,17 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 add_executable(test_neuron test_neuron.cpp)
-target_include_directories(test_neuron PRIVATE ${CMAKE_SOURCE_DIR/lib})
+target_include_directories(
+    test_neuron
+    PRIVATE
+    ${LIB_RECOGNITION_DIR}
+)
+
 target_link_libraries(
     test_neuron
     PRIVATE
     GTest::gtest_main
-    ${RECOGNITION_LIBRARY_NAME}
+    ${LIB_RECOGNITION_NAME}
 )
 
 add_test(NAME test_neuron COMMAND test_neuron)
