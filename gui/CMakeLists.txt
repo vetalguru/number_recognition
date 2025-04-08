@@ -17,10 +17,12 @@ find_package(Qt6
 set(SOURCES
     main.cpp
     mainwindow.cpp
+    drawwidget.cpp
 )
 
 set(HEADERS
     mainwindow.h
+    drawwidget.h
 )
 
 add_executable(${GUI_RECOGNITION_NAME} ${SOURCES} ${HEADER})
