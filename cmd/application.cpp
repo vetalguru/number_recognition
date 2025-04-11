@@ -535,7 +535,7 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
     LOG_INFO << "Epoches: " << kEpoch;
     LOG_INFO << "Learning rate: " << kLearningRate;
 
-    auto function = Neuron::ActivationFunction::RELU;
+    auto function = Neuron::ActivationFunction::SIGMOID;
     Perceptron network({kImageSize, 256, 128, kNumClasses}, function);
 
     // Load train data

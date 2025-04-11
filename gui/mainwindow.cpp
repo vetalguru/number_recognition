@@ -5,6 +5,10 @@
 #include <QVBoxLayout>
 #include <QGroupBox>
 #include <QLabel>
+#include <QMenu>
+#include <QMenuBar>
+#include <QAction>
+#include <QMessageBox>
 
 #include "drawwidget.h"
 
@@ -54,11 +58,39 @@ MainWindow::MainWindow(QWidget *parent)
     vMainLayout->addWidget(resultBox);
     centralWidget->setLayout(vMainLayout);
 
+    // Create main menu
+    // Create File menu
+    QMenu *fileMenu = menuBar()->addMenu("&File");
+    QAction *openModelFileAction = new QAction("Open model file...");
+    QAction *exitAction = new QAction("&Exit");
+
+    fileMenu->addAction(openModelFileAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(exitAction);
+
+    // Create Help menu
+    QMenu *helpMenu = menuBar()->addMenu("&Help");
+    QAction *aboutAction = new QAction("&About...");
+    helpMenu->addAction(aboutAction);
+
     // Signals & slots
+    // Buttons
     connect(m_clearButton, SIGNAL(clicked()), m_drawWidget, SLOT(clear()));
     connect(m_recButton, SIGNAL(clicked()), this, SLOT(onRecognizeButtonClick()));
+
+    // Main menu
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+    connect(openModelFileAction, SIGNAL(triggered()), this, SLOT(onModelFileOpen()));
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(onAbout()));
 }
 
 void MainWindow::onRecognizeButtonClick() {
+}
 
+void MainWindow::onModelFileOpen() {
+
+}
+
+void MainWindow::onAbout() {
+    QMessageBox::about(this, "About...", "The application for number recognition");
 }
