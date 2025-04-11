@@ -16,6 +16,8 @@ public:
 
 private slots:
     void onRecognizeButtonClick();
+    void onModelFileOpen();
+    void onAbout();
 
 private:
     static constexpr int kNumberClasses = 10;  // numbers from 0 to 9
