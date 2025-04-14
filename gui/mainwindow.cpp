@@ -16,6 +16,7 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
+#include <vector>
 
 #include "drawwidget.h"
 
@@ -48,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
         m_progressBars[i] = new QProgressBar();
         m_progressBars[i]->setMinimum(0);
         m_progressBars[i]->setMaximum(100);
+        m_progressBars[i]->setValue(0);
 
         QHBoxLayout *resultProgressLayout = new QHBoxLayout();
         resultProgressLayout->addWidget(label);
@@ -82,7 +84,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Signals & slots
     // Buttons
-    connect(m_clearButton, SIGNAL(clicked()), m_drawWidget, SLOT(clear()));
+    connect(m_clearButton, SIGNAL(clicked()), this, SLOT(onClearButtonClick()));
     connect(m_recButton, SIGNAL(clicked()), this, SLOT(onRecognizeButtonClick()));
 
     // Main menu
@@ -97,6 +99,7 @@ void MainWindow::onRecognizeButtonClick() {
                              "Recognition warning",
                              "Unable to recognize the number without a learned model.\n\n"
                                    "Please, select model file.");
+        return;
     }
 
     Perceptron network{};
@@ -107,13 +110,24 @@ void MainWindow::onRecognizeButtonClick() {
         return;
     }
 
-    QMessageBox::information(this,
-                         "Training model",
-                         "Training model loaded successfully");
+    std::vector<double> imagePixels;
+    m_drawWidget->getMnistCsvValues(imagePixels);
 
+    std::vector<double> recResult = network.forward(imagePixels).back();
 
+    for (int i = 0; i < kNumberClasses; ++i) {
+        m_progressBars[i]->setValue(static_cast<int>(recResult[i] * 100));
+    }
 
     return;
+}
+
+void MainWindow::onClearButtonClick() {
+    m_drawWidget->clear();
+
+    for (int i = 0; i < kNumberClasses; ++i) {
+        m_progressBars[i]->setValue(0);
+    }
 }
 
 void MainWindow::onModelFileOpen() {
