@@ -18,6 +18,7 @@ public:
 
 private slots:
     void onRecognizeButtonClick();
+    void onClearButtonClick();
     void onModelFileOpen();
     void onAbout();
 
