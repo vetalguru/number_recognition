@@ -1,7 +1,6 @@
 #include "drawwidget.h"
 
 #include <QPainter>
-#include <QStringList>
 
 DrawWidget::DrawWidget(QWidget *parent)
     : QWidget(parent)
@@ -38,18 +37,17 @@ void DrawWidget::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
-QString DrawWidget::getMnistCsvString(int aLabel) const {
+void DrawWidget::getMnistCsvValues(std::vector<double>& aOutput) const {
+    aOutput.clear();
+
     QImage scaled = m_image.scaled(28, 28, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    QStringList values;
-    values << QString::number(aLabel);
+    aOutput.reserve(kMnistImageWidth * kMnistImageHeight);
 
     for (int y = 0; y < kMnistImageHeight; ++y) {
         for (int x = 0; x < kMnistImageWidth; ++x) {
-            int pixel = qGray(scaled.pixel(x, y));
+            double pixel = qGray(scaled.pixel(x, y));
             pixel = 255 - pixel;  // MNIST: 0 = background, 255 = black
-            values << QString::number(pixel);
+            aOutput.emplace_back(pixel);
         }
     }
-
-    return values.join(kMnistDelimiter);
 }

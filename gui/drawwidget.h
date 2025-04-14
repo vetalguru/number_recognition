@@ -8,6 +8,8 @@
 #include <QMouseEvent>
 #include <QString>
 
+#include <vector>
+
 class DrawWidget : public QWidget
 {
     Q_OBJECT
@@ -16,7 +18,7 @@ public:
     explicit DrawWidget(QWidget *parent = nullptr);
     virtual ~DrawWidget() {}
 
-    QString getMnistCsvString(int aLabel = 0) const;
+    void getMnistCsvValues(std::vector<double>& aOutput) const;
 
 public slots:
     void clear();
