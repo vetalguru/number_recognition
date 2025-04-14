@@ -9,6 +9,13 @@
 #include <QMenuBar>
 #include <QAction>
 #include <QMessageBox>
+#include <QFileDialog>
+
+#include <boost/json.hpp>
+
+#include <string>
+#include <filesystem>
+#include <fstream>
 
 #include "drawwidget.h"
 
@@ -85,12 +92,136 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::onRecognizeButtonClick() {
+    if (m_modelFileName.isEmpty()) {
+        QMessageBox::warning(this,
+                             "Recognition warning",
+                             "Unable to recognize the number without a learned model.\n\n"
+                                   "Please, select model file.");
+    }
+
+    Perceptron network{};
+    if (!loadModelFromJson(m_modelFileName, network)) {
+        QMessageBox::warning(this,
+                             "Training model warning",
+                             "Unable to load model");
+        return;
+    }
+
+    QMessageBox::information(this,
+                         "Training model",
+                         "Training model loaded successfully");
+
+
+
+    return;
 }
 
 void MainWindow::onModelFileOpen() {
-
+    m_modelFileName = QFileDialog::getOpenFileName(
+        this,
+        "Select model file",
+        QString(),
+        "All files (*);;JSON file (*.json)");
 }
 
 void MainWindow::onAbout() {
     QMessageBox::about(this, "About...", "The application for number recognition");
+}
+
+bool MainWindow::loadModelFromJson(const QString& aFileName,
+                                    Perceptron& aNetwork) const {
+    std::string fileName = aFileName.toStdString();
+
+    if (aFileName.isEmpty()) {
+        return false;
+    }
+
+    if (!std::filesystem::exists(fileName)) {
+        return false;
+    }
+
+    std::ifstream file(fileName);
+    if (!file.is_open()) {
+        return false;
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    file.close();
+
+    boost::json::value parsedJson;
+    try {
+        parsedJson = boost::json::parse(buffer.str());
+    } catch (const std::exception& e) {
+        return false;
+    }
+
+    boost::json::object jsonModel = parsedJson.as_object();
+    // Check if JSON has required fields and types
+    if (!jsonModel.contains("architecture") ||
+        !jsonModel["architecture"].is_array() ||
+        !jsonModel.contains("layers") ||
+        !jsonModel["layers"].is_array()) {
+        return false;
+    }
+
+    // Read architecture
+    std::vector<int> architecture;
+    try {
+        for (const auto& layerSize : jsonModel["architecture"].as_array()) {
+            if (!layerSize.is_number()) {
+                return false;
+            }
+
+            architecture.emplace_back(layerSize.as_int64());
+        }
+    }
+    catch(const std::exception& e) {
+        return false;
+    }
+
+    if (architecture.empty()) {
+        return false;
+    }
+
+    // Set architecture
+    if (!aNetwork.initializeNetwork(architecture)) {
+        return false;
+    }
+
+    const auto& jsonLayers = jsonModel["layers"].as_array();
+    if (jsonLayers.size() != architecture.size() - 1) {
+
+        return false;
+    }
+
+    // Read weights and biases
+    try {
+        for (size_t layerIndex = 0; layerIndex < jsonLayers.size();
+             ++layerIndex) {
+            const auto& jsonLayer = jsonLayers[layerIndex];
+            for (size_t neuronIndex = 0;
+                 neuronIndex <
+                 jsonLayer.at("neurons").as_array().size();
+                 ++neuronIndex) {
+                const auto& neuronJson =
+                    jsonLayer.at("neurons").as_array()[neuronIndex];
+
+                const auto& weightsJson =
+                    neuronJson.at("weights").as_array();
+                std::vector<double> weights;
+                for (const auto& weight : weightsJson) {
+                    weights.emplace_back(weight.as_double());
+                }
+
+                aNetwork.setNeuronWeights(layerIndex, neuronIndex, weights);
+                aNetwork.setNeuronBias(layerIndex, neuronIndex,
+                                       neuronJson.at("bias").as_double());
+            }
+        }
+    } catch (const std::exception& e) {
+        return false;
+    }
+
+    return true;
 }
