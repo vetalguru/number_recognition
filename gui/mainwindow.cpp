@@ -1,4 +1,6 @@
-#include "mainwindow.h"
+// Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
+
+#include "./mainwindow.h"
 
 #include <QWidget>
 #include <QHBoxLayout>
@@ -11,14 +13,14 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-#include <boost/json.hpp>
-
 #include <string>
 #include <filesystem>
 #include <fstream>
 #include <vector>
 
-#include "drawwidget.h"
+#include <boost/json.hpp>
+
+#include "./drawwidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
@@ -42,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     drawBox->setLayout(drawLayout);
 
     // Result box
-    QVBoxLayout *resultLayout= new QVBoxLayout();
+    QVBoxLayout *resultLayout = new QVBoxLayout();
     for (int i = 0; i < kNumberClasses; ++i) {
         QLabel *label = new QLabel(QString::number(i));
 
@@ -84,12 +86,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Signals & slots
     // Buttons
-    connect(m_clearButton, SIGNAL(clicked()), this, SLOT(onClearButtonClick()));
-    connect(m_recButton, SIGNAL(clicked()), this, SLOT(onRecognizeButtonClick()));
+    connect(m_clearButton, SIGNAL(clicked()), this,
+            SLOT(onClearButtonClick()));
+    connect(m_recButton, SIGNAL(clicked()), this,
+            SLOT(onRecognizeButtonClick()));
 
     // Main menu
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
-    connect(openModelFileAction, SIGNAL(triggered()), this, SLOT(onModelFileOpen()));
+    connect(openModelFileAction, SIGNAL(triggered()), this,
+            SLOT(onModelFileOpen()));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(onAbout()));
 }
 
@@ -97,7 +102,8 @@ void MainWindow::onRecognizeButtonClick() {
     if (m_modelFileName.isEmpty()) {
         QMessageBox::warning(this,
                              "Recognition warning",
-                             "Unable to recognize the number without a learned model.\n\n"
+                             "Unable to recognize the number without"
+                             "a learned model.\n\n"
                                    "Please, select model file.");
         return;
     }
@@ -139,7 +145,8 @@ void MainWindow::onModelFileOpen() {
 }
 
 void MainWindow::onAbout() {
-    QMessageBox::about(this, "About...", "The application for number recognition");
+    QMessageBox::about(this, "About...",
+                       "The application for number recognition");
 }
 
 bool MainWindow::loadModelFromJson(const QString& aFileName,
@@ -205,7 +212,6 @@ bool MainWindow::loadModelFromJson(const QString& aFileName,
 
     const auto& jsonLayers = jsonModel["layers"].as_array();
     if (jsonLayers.size() != architecture.size() - 1) {
-
         return false;
     }
 

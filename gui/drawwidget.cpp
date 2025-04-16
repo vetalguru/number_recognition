@@ -1,4 +1,6 @@
-#include "drawwidget.h"
+// Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
+
+#include "./drawwidget.h"
 
 #include <QPainter>
 
@@ -40,7 +42,8 @@ void DrawWidget::mouseMoveEvent(QMouseEvent *event) {
 void DrawWidget::getMnistCsvValues(std::vector<double>& aOutput) const {
     aOutput.clear();
 
-    QImage scaled = m_image.scaled(28, 28, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    QImage scaled = m_image.scaled(28, 28,
+        Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     aOutput.reserve(kMnistImageWidth * kMnistImageHeight);
 
     for (int y = 0; y < kMnistImageHeight; ++y) {
