@@ -40,6 +40,10 @@ jobs:
         libboost-program-options-dev
         libboost-json-dev
 
+    - name: Qt
+      run: sudo apt-get install -yq
+        qt6-base-dev
+
     - name: Configure CMake
       run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
