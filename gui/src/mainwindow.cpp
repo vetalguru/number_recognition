@@ -14,7 +14,7 @@
 #include <QFileDialog>
 
 #include <string>
-#include <filesystem>
+#include <filesystem>  // NOLINT(build/c++17)
 #include <fstream>
 #include <vector>
 
