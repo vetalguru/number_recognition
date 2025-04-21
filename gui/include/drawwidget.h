@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#ifndef GUI_DRAWWIDGET_H_
-#define GUI_DRAWWIDGET_H_
+#ifndef GUI_INCLUDE_DRAWWIDGET_H_
+#define GUI_INCLUDE_DRAWWIDGET_H_
 
 #include <QWidget>
 #include <QImage>
@@ -39,4 +39,4 @@ class DrawWidget : public QWidget {
     QPoint m_lastPoint;
 };
 
-#endif  // GUI_DRAWWIDGET_H_
+#endif  // GUI_INCLUDE_DRAWWIDGET_H_

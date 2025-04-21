@@ -13,12 +13,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(HEADERS_LIST
     ${CMAKE_BINARY_DIR}/version.h
-    ${CMD_RECOGNITION_DIR}/application.h
+    ${CMD_RECOGNITION_DIR}/include/application.h
 )
 
 set(SOURCES_LIST
-    ${CMD_RECOGNITION_DIR}/main.cpp
-    ${CMD_RECOGNITION_DIR}/application.cpp
+    ${CMD_RECOGNITION_DIR}/src/main.cpp
+    ${CMD_RECOGNITION_DIR}/src/application.cpp
 )
 
 execute_process(

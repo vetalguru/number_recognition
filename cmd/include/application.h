@@ -1,12 +1,12 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#ifndef CMD_APPLICATION_H_
-#define CMD_APPLICATION_H_
+#ifndef CMD_INCLUDE_APPLICATION_H_
+#define CMD_INCLUDE_APPLICATION_H_
 
 #include <string>
 #include <vector>
 
-#include "../lib/include/perceptron.h"
+#include "include/perceptron.h"
 
 
 namespace boost {
@@ -62,4 +62,4 @@ class Application {
         Perceptron& aNetwork) const;  // NOLINT(runtime/references)
 };
 
-#endif  // CMD_APPLICATION_H_
+#endif  // CMD_INCLUDE_APPLICATION_H_
