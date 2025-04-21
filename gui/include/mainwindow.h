@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#ifndef GUI_MAINWINDOW_H_
-#define GUI_MAINWINDOW_H_
+#ifndef GUI_INCLUDE_MAINWINDOW_H_
+#define GUI_INCLUDE_MAINWINDOW_H_
 
 #include <QMainWindow>
 #include <QProgressBar>
@@ -40,4 +40,4 @@ class MainWindow : public QMainWindow {
     QString m_modelFileName;
 };
 
-#endif  // GUI_MAINWINDOW_H_
+#endif  // GUI_INCLUDE_MAINWINDOW_H_

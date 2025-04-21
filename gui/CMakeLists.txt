@@ -24,22 +24,23 @@ find_package(Boost 1.74.0
     json)
 
 set(SOURCES
-    ${GUI_RECOGNITION_DIR}/main.cpp
-    ${GUI_RECOGNITION_DIR}/mainwindow.cpp
-    ${GUI_RECOGNITION_DIR}/drawwidget.cpp
+    ${GUI_RECOGNITION_DIR}/src/main.cpp
+    ${GUI_RECOGNITION_DIR}/src/mainwindow.cpp
+    ${GUI_RECOGNITION_DIR}/src/drawwidget.cpp
 )
 
 set(HEADERS
-    ${GUI_RECOGNITION_DIR}/mainwindow.h
-    ${GUI_RECOGNITION_DIR}/drawwidget.h
+    ${GUI_RECOGNITION_DIR}/include/mainwindow.h
+    ${GUI_RECOGNITION_DIR}/include/drawwidget.h
 )
 
-add_executable(${GUI_RECOGNITION_NAME} ${SOURCES} ${HEADER})
+add_executable(${GUI_RECOGNITION_NAME} ${SOURCES} ${HEADERS})
 
 target_include_directories(
     ${GUI_RECOGNITION_NAME}
     PRIVATE
     ${Boost_INCLUDE_DIRS}
+    ${GUI_RECOGNITION_DIR}
     ${LIB_RECOGNITION_DIR}
 )
 

@@ -1,6 +1,6 @@
 // Copyright (c) 2024-2025 Vitalii Shkibtan. All rights reserved.
 
-#include "./application.h"
+#include "include/application.h"
 
 #include "include/logger.hpp"
 
