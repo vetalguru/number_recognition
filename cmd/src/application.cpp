@@ -53,7 +53,7 @@ void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
             "Path to train csv file (mnist_train.csv)")
         ("test-data,c", po::value<std::string>(),
             "Path to data file csv (mnist_test.csv)")
-        ("save-model,s", po::value<std::string>(),
+        ("output-model,o", po::value<std::string>(),
             "Output file with trained model and network configuration");
 
     po::options_description recDesc("Recognition options");
@@ -126,11 +126,11 @@ void Application::initTrainingMode(const po::variables_map& aVm) {
         return;
     }
 
-    if (aVm.count("save-model")) {
+    if (aVm.count("output-model")) {
         try {
-            outputModelFile = aVm["save-model"].as<std::string>();
+            outputModelFile = aVm["output-model"].as<std::string>();
         } catch (const std::exception& e) {
-            LOG_ERROR << "Wrong --save-model parameter format. Error: "
+            LOG_ERROR << "Wrong --output-model parameter format. Error: "
                 << e.what();
             return;
         }
