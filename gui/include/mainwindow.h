@@ -20,10 +20,14 @@ class MainWindow : public QMainWindow {
     virtual ~MainWindow() {}
 
  private slots:
+    // Main menu
+    void onModelFileOpen();
+    void onLearnModel();
+    void onAbout();
+
+    // Buttons
     void onRecognizeButtonClick();
     void onClearButtonClick();
-    void onModelFileOpen();
-    void onAbout();
 
  private:
     bool loadModelFromJson(const QString& aFileName,
