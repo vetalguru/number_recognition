@@ -79,6 +79,11 @@ MainWindow::MainWindow(QWidget *parent)
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
+    // Create model menu
+    QMenu *modelMenu = menuBar()->addMenu("&Model");
+    QAction *learnModelAction = new QAction("Learn model");
+    modelMenu->addAction(learnModelAction);
+
     // Create Help menu
     QMenu *helpMenu = menuBar()->addMenu("&Help");
     QAction *aboutAction = new QAction("&About...");
@@ -95,6 +100,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
     connect(openModelFileAction, SIGNAL(triggered()), this,
             SLOT(onModelFileOpen()));
+    connect(learnModelAction, SIGNAL(triggered()), this, SLOT(onLearnModel()));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(onAbout()));
 }
 
@@ -142,6 +148,10 @@ void MainWindow::onModelFileOpen() {
         "Select model file",
         QString(),
         "All files (*);;JSON file (*.json)");
+}
+
+void MainWindow::onLearnModel() {
+    QMessageBox::information(this, "Learn model dialog", "NOT IMPLEMENTED");
 }
 
 void MainWindow::onAbout() {
