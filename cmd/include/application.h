@@ -19,7 +19,6 @@ namespace po = boost::program_options;
 
 class Application {
  public:
-
     static constexpr int kDefaultEpoch = 40;
     static constexpr double kDefaultLearningRate = 0.001;
 
