@@ -44,7 +44,7 @@ void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
     mainDesc.add_options()
         ("help,h", "Show help message")
         ("version,v", "Show version")
-        ("mode,m", po::value<std::string>(&taskType),
+        ("mode,m", po::value<std::string>(&taskType)->required(),
             "Select mode: training, recognition");
 
     po::options_description trainDesc("Training options:");
