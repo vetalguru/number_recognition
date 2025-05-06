@@ -19,6 +19,11 @@ namespace po = boost::program_options;
 
 class Application {
  public:
+
+    static constexpr int kDefaultEpoch = 40;
+    static constexpr double kDefaultLearningRate = 0.001;
+
+ public:
     Application() = default;
     ~Application() = default;
 
@@ -39,7 +44,8 @@ class Application {
     void handleTrainingMode(
         const std::string& aMnistTrainFile,
         const std::string& aMnistTestFile,
-        const std::string& aOutputModelFile);
+        const std::string& aOutputModelFile,
+        const double aLearningRate);
 
     void handleRecognitionMode(
         const std::string& aDataFile,
