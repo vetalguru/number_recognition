@@ -21,6 +21,7 @@
 #include <boost/json.hpp>
 
 #include "include/drawwidget.h"
+#include "include/mnistlearningform.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
@@ -151,7 +152,8 @@ void MainWindow::onModelFileOpen() {
 }
 
 void MainWindow::onLearnModel() {
-    QMessageBox::information(this, "Learn model dialog", "NOT IMPLEMENTED");
+    MnistLearningForm dialog;
+    dialog.exec();
 }
 
 void MainWindow::onAbout() {
