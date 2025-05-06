@@ -68,8 +68,13 @@ void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
     mainDesc.add(trainDesc).add(recDesc);
 
     po::variables_map vm;
-    po::store(po::parse_command_line(aArgc, aArgv, mainDesc), vm);
-    po::notify(vm);
+    try {
+        po::store(po::parse_command_line(aArgc, aArgv, mainDesc), vm);
+        po::notify(vm);
+    } catch (const po::error& e) {
+        LOG_ERROR << "Error: Unable to parse command line with error: " << e.what();
+        return;
+    }
 
     if (vm.count("version")) {
         std::cout << version() << std::endl;
