@@ -19,7 +19,7 @@ namespace po = boost::program_options;
 
 class Application {
  public:
-    static constexpr int kDefaultEpoch = 40;
+    static constexpr int kDefaultEpochs = 40;
     static constexpr double kDefaultLearningRate = 0.001;
 
  public:
@@ -44,6 +44,7 @@ class Application {
         const std::string& aMnistTrainFile,
         const std::string& aMnistTestFile,
         const std::string& aOutputModelFile,
+        const int aEpochs,
         const double aLearningRate);
 
     void handleRecognitionMode(
