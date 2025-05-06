@@ -6,7 +6,6 @@
 #include <iostream>  // For help and version output
 #include <filesystem>  // NOLINT(build/c++17)
 #include <fstream>
-#include <numeric>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -71,6 +70,9 @@ void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
             "Output file with trained model and network configuration")
         ("learning-rate,l",
             po::value<double>()->default_value(kDefaultLearningRate),
+            "Learning rate for optimizer. Typical values: 0.1–0.001")
+        ("epochs,e",
+            po::value<int>()->default_value(kDefaultEpochs),
             "Learning rate for optimizer. Typical values: 0.1–0.001");
 
     po::options_description recDesc("Recognition options");
@@ -119,22 +121,18 @@ void Application::initTrainingMode(const po::variables_map& aVm) {
     std::string trainFile;
     std::string testFile;
     std::string outputFile;
+    int epochs;
     double learningRate;
 
-    if (!getValue(aVm, "train-data", trainFile, "--train-data") ||
-        !getValue(aVm, "test-data", testFile, "--test-data") ||
+    if (!getValue(aVm, "train-data", trainFile, "--train-data")      ||
+        !getValue(aVm, "test-data", testFile, "--test-data")         ||
         !getValue(aVm, "output-model", outputFile, "--output-model") ||
+        !getValue(aVm, "epochs", epochs, "--epochs")                 ||
         !getValue(aVm, "learning-rate", learningRate, "--learning-rate")) {
         return;
     }
 
-    LOG_INFO << "Training mode parameters:\n"
-             << "\tTrain file:\t" << trainFile << "\n"
-             << "\tTest file:\t" << testFile << "\n"
-             << "\tModel file:\t" << outputFile << "\n"
-             << "\tLearning rate:\t" << learningRate;
-
-    handleTrainingMode(trainFile, testFile, outputFile, learningRate);
+    handleTrainingMode(trainFile, testFile, outputFile, epochs, learningRate);
 }
 
 void Application::initRecognitionMode(const po::variables_map& aVm) {
@@ -460,6 +458,7 @@ int Application::run(const int aArgc, const char* const aArgv[]) {
 void Application::handleTrainingMode(const std::string& aMnistTrainFile,
                                      const std::string& aMnistTestFile,
                                      const std::string& aOutputModelFile,
+                                     const int aEpochs,
                                      const double aLearningRate) {
     if (!std::filesystem::exists(aMnistTrainFile)) {
         LOG_ERROR<< "Train file " << aMnistTrainFile << " does not exist";
@@ -476,13 +475,24 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
         return;
     }
 
+    if (aEpochs <= 0 || aEpochs > 100) {
+        LOG_ERROR << "Epochs value wrong on not effective: "
+                  << aEpochs;
+        return;
+    }
+
     if (aLearningRate >= 0.5 || aLearningRate < 0.00001) {
         LOG_ERROR << "Learning rate value wrong on not effective: "
                   << aLearningRate;
         return;
     }
 
-    LOG_INFO << "Epoches: " << kDefaultEpoch;
+    LOG_INFO << "Training mode parameters:\n"
+             << "\tTrain file:\t" << aMnistTrainFile << "\n"
+             << "\tTest file:\t" << aMnistTestFile << "\n"
+             << "\tModel file:\t" << aOutputModelFile << "\n"
+             << "\tEpochs num:\t" << aEpochs << "\n"
+             << "\tLearning rate:\t" << aLearningRate;
 
     auto function = Neuron::ActivationFunction::SIGMOID;
     Perceptron network({kImageSize, 256, 128, kNumClasses}, function);
@@ -497,7 +507,7 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
 
     // Train model
     LOG_INFO << "Training started...";
-    network.train(trainInputs, trainTargets, kDefaultEpoch, aLearningRate);
+    network.train(trainInputs, trainTargets, aEpochs, aLearningRate);
     LOG_INFO << "Training finished";
 
     // Load test data
