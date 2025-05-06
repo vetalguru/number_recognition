@@ -11,6 +11,10 @@
 #include <QMetaObject>
 #include <QMessageBox>
 
+#include <string>
+#include <vector>
+#include <utility>
+
 #include "boost/json.hpp"
 
 #include "include/perceptron.h"
