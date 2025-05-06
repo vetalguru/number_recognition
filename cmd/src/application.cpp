@@ -70,19 +70,20 @@ void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
     po::variables_map vm;
     try {
         po::store(po::parse_command_line(aArgc, aArgv, mainDesc), vm);
+
+        if (vm.count("version")) {
+            std::cout << version() << std::endl;
+            return;
+        }
+
+        if (vm.count("help")) {
+            std::cout << mainDesc << std::endl;
+            return;
+        }
+
         po::notify(vm);
     } catch (const po::error& e) {
         LOG_ERROR << "Error: Unable to parse command line with error: " << e.what();
-        return;
-    }
-
-    if (vm.count("version")) {
-        std::cout << version() << std::endl;
-        return;
-    }
-
-    if (vm.count("help") || taskType.empty()) {
-        std::cout << mainDesc << std::endl;
         return;
     }
 
