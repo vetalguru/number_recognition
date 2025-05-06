@@ -52,9 +52,9 @@ bool Application::getValue(const po::variables_map& aVm,
 }
 
 void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
-    po::options_description mainDesc{"General options"};
     std::string taskType;
 
+    po::options_description mainDesc{"General options"};
     mainDesc.add_options()
         ("help,h", "Show help message")
         ("version,v", "Show version")
@@ -68,7 +68,10 @@ void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
         ("test-data,c", po::value<std::string>(),
             "Path to data file csv (mnist_test.csv)")
         ("output-model,o", po::value<std::string>(),
-            "Output file with trained model and network configuration");
+            "Output file with trained model and network configuration")
+        ("learning-rate,l",
+            po::value<double>()->default_value(kDefaultLearningRate),
+            "Learning rate for optimizer. Typical values: 0.1–0.001");
 
     po::options_description recDesc("Recognition options");
     recDesc.add_options()
@@ -116,19 +119,22 @@ void Application::initTrainingMode(const po::variables_map& aVm) {
     std::string trainFile;
     std::string testFile;
     std::string outputFile;
+    double learningRate;
 
     if (!getValue(aVm, "train-data", trainFile, "--train-data") ||
         !getValue(aVm, "test-data", testFile, "--test-data") ||
-        !getValue(aVm, "output-model", outputFile, "--output-model")) {
+        !getValue(aVm, "output-model", outputFile, "--output-model") ||
+        !getValue(aVm, "learning-rate", learningRate, "--learning-rate")) {
         return;
     }
 
     LOG_INFO << "Training mode parameters:\n"
              << "\tTrain file:\t" << trainFile << "\n"
              << "\tTest file:\t" << testFile << "\n"
-             << "\tModel file:\t" << outputFile;
+             << "\tModel file:\t" << outputFile << "\n"
+             << "\tLearning rate:\t" << learningRate;
 
-    handleTrainingMode(trainFile, testFile, outputFile);
+    handleTrainingMode(trainFile, testFile, outputFile, learningRate);
 }
 
 void Application::initRecognitionMode(const po::variables_map& aVm) {
@@ -452,8 +458,9 @@ int Application::run(const int aArgc, const char* const aArgv[]) {
 }
 
 void Application::handleTrainingMode(const std::string& aMnistTrainFile,
-        const std::string& aMnistTestFile,
-        const std::string& aOutputModelFile) {
+                                     const std::string& aMnistTestFile,
+                                     const std::string& aOutputModelFile,
+                                     const double aLearningRate) {
     if (!std::filesystem::exists(aMnistTrainFile)) {
         LOG_ERROR<< "Train file " << aMnistTrainFile << " does not exist";
         return;
@@ -469,27 +476,13 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
         return;
     }
 
-    // Epochs   Speed           Accuracy
-    // 10       🏎 fast         ~97% (optimal)
-    // 15       🐢 slowly       ~98%
-    constexpr int kEpoch = 10;
+    if (aLearningRate >= 0.5 || aLearningRate < 0.00001) {
+        LOG_ERROR << "Learning rate value wrong on not effective: "
+                  << aLearningRate;
+        return;
+    }
 
-    /**
-       Learning rate    Speed                 Accuracy    Problems
-       0.01             🚀 fast            ✅ ~98%     Optimal
-       0.05             🏎 very fast        ⚠ ~97%     Fluctuations
-       0.1              ⚠  fast            ❌ ~90%     Unstable
-    */
-    constexpr double kLearningRate = 0.001;
-
-    /**
-       Net architecture       Speed       Accuracy
-       784 → 128 → 10         🚀 fast     97-98%
-       784 → 256 → 128 → 10   ⚡ medium   98-99%
-    */
-
-    LOG_INFO << "Epoches: " << kEpoch;
-    LOG_INFO << "Learning rate: " << kLearningRate;
+    LOG_INFO << "Epoches: " << kDefaultEpoch;
 
     auto function = Neuron::ActivationFunction::SIGMOID;
     Perceptron network({kImageSize, 256, 128, kNumClasses}, function);
@@ -504,7 +497,7 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
 
     // Train model
     LOG_INFO << "Training started...";
-    network.train(trainInputs, trainTargets, kEpoch, kLearningRate);
+    network.train(trainInputs, trainTargets, kDefaultEpoch, aLearningRate);
     LOG_INFO << "Training finished";
 
     // Load test data
