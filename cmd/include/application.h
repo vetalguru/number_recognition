@@ -60,6 +60,11 @@ class Application {
     bool loadModelFromJson(
         const std::string& aFileName,
         Perceptron& aNetwork) const;  // NOLINT(runtime/references)
+
+    template <typename T>
+    bool getValue(const po::variables_map& aVm, const std::string& aKey,
+                  // NOLINTNEXTLINE(runtime/references)
+                  T& aOut, const std::string& aLabel);
 };
 
 #endif  // CMD_INCLUDE_APPLICATION_H_
