@@ -37,6 +37,20 @@ std::string Application::version() const {
     return ss.str();
 }
 
+template<typename T>
+bool Application::getValue(const po::variables_map& aVm,
+                           const std::string& aKey,
+                           T& aOut,
+                           const std::string& aLabel) {
+    try {
+        aOut = aVm.at(aKey).as<T>();
+    } catch (const std::exception& e) {
+        LOG_ERROR << "Invalid or missing " << aLabel << ". " << e.what();
+        return false;
+    }
+    return true;
+}
+
 void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
     po::options_description mainDesc{"General options"};
     std::string taskType;
@@ -83,7 +97,8 @@ void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
 
         po::notify(vm);
     } catch (const po::error& e) {
-        LOG_ERROR << "Error: Unable to parse command line with error: " << e.what();
+        LOG_ERROR << "Error: Unable to parse command line with error: "
+                  << e.what();
         return;
     }
 
@@ -98,104 +113,39 @@ void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
 }
 
 void Application::initTrainingMode(const po::variables_map& aVm) {
-    LOG_INFO << "Training mode parameters:";
-
-    std::string trainingFile;
+    std::string trainFile;
     std::string testFile;
-    std::string outputModelFile;
+    std::string outputFile;
 
-    if (aVm.count("train-data")) {
-        try {
-            trainingFile = aVm["train-data"].as<std::string>();
-        } catch (const std::exception& e) {
-            LOG_ERROR << "Wrong -- train-data parameter format. Error: "
-                << e.what();
-                return;
-        }
-        LOG_INFO << "Train file name: " << trainingFile;
-    } else {
-        LOG_ERROR << "Missing train file";
+    if (!getValue(aVm, "train-data", trainFile, "--train-data") ||
+        !getValue(aVm, "test-data", testFile, "--test-data") ||
+        !getValue(aVm, "output-model", outputFile, "--output-model")) {
         return;
     }
 
-    if (aVm.count("test-data")) {
-        try {
-            testFile = aVm["test-data"].as<std::string>();
-        } catch (const std::exception& e) {
-            LOG_ERROR << "Wrong --test-data parameter format. Error: "
-                << e.what();
-            return;
-        }
-        LOG_INFO << "Test file name: "<< testFile;
-    } else {
-        LOG_ERROR << "Missing test file";
-        return;
-    }
+    LOG_INFO << "Training mode parameters:\n"
+             << "\tTrain file:\t" << trainFile << "\n"
+             << "\tTest file:\t" << testFile << "\n"
+             << "\tModel file:\t" << outputFile;
 
-    if (aVm.count("output-model")) {
-        try {
-            outputModelFile = aVm["output-model"].as<std::string>();
-        } catch (const std::exception& e) {
-            LOG_ERROR << "Wrong --output-model parameter format. Error: "
-                << e.what();
-            return;
-        }
-        LOG_INFO << "Output model file: " << outputModelFile;
-    } else {
-        LOG_ERROR << "Output model file is not specified";
-        return;
-    }
-
-    handleTrainingMode(trainingFile, testFile, outputModelFile);
+    handleTrainingMode(trainFile, testFile, outputFile);
 }
 
 void Application::initRecognitionMode(const po::variables_map& aVm) {
-    LOG_INFO << "Detected recognition mode";
-
     std::string dataFile;
     std::string modelFile;
     std::string resultFile;
-    if (aVm.count("data")) {
-        try {
-            dataFile = aVm["data"].as<std::string>();
-        } catch (const std::exception& e) {
-            LOG_ERROR << "Wrong --data parameter format. Error: "
-                << e.what();
-            return;
-        }
-        LOG_INFO << "Data file:" << dataFile;
-    } else {
-        LOG_ERROR << "Data file is not specified";
+
+    if (!getValue(aVm, "data", dataFile, "--data") ||
+        !getValue(aVm, "model", modelFile, "--model") ||
+        !getValue(aVm, "result", resultFile, "--result")) {
         return;
     }
 
-    if (aVm.count("model")) {
-        try {
-            modelFile = aVm["model"].as<std::string>();
-        } catch (const std::exception& e) {
-            LOG_ERROR << "Wrong --model parameter format. Error: "
-                << e.what();
-            return;
-        }
-        LOG_INFO << "Model file: " << modelFile;
-    } else {
-        LOG_ERROR << "File with model is not specified";
-        return;
-    }
-
-    if (aVm.count("result")) {
-        try {
-            resultFile = aVm["result"].as<std::string>();
-        } catch (const std::exception& e) {
-            LOG_ERROR << "Wrong --result parameter format. Error: "
-                << e.what();
-            return;
-        }
-        LOG_INFO << "Result file: " << resultFile;
-    } else {
-        LOG_ERROR << "Result file path is not specified";
-        return;
-    }
+    LOG_INFO << "Recognition mode parameters:" << "\n"
+             << "\tData file:\t" << dataFile << "\n"
+             << "\tModel file:\t" << modelFile << "\n"
+             << "\tResult file:\t" << resultFile;
 
     handleRecognitionMode(dataFile, modelFile, resultFile);
 }
