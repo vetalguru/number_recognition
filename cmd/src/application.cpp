@@ -50,6 +50,33 @@ bool Application::getValue(const po::variables_map& aVm,
     return true;
 }
 
+std::vector<size_t> Application::parseLayersString(const std::string& aInput,
+    size_t aImageSize, size_t aNumClasses) const {
+    std::vector<size_t> result;
+    std::stringstream ss(aInput);
+    std::string item;
+
+    result.push_back(aImageSize);
+    while (std::getline(ss, item, ',')) {
+        result.push_back(std::stoul(item));
+    }
+    result.push_back(aNumClasses);
+
+    return result;
+}
+
+std::string Application::vectorToString(const std::vector<size_t>& aVector,
+                           char aDelimiter) const {
+    std::ostringstream oss;
+    for (size_t i = 0; i < aVector.size(); ++i) {
+        if (i != 0) {
+            oss << aDelimiter;
+        }
+        oss << aVector[i];
+    }
+    return oss.str();
+}
+
 void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
     std::string taskType;
 
@@ -68,12 +95,14 @@ void Application::parseCommandLine(const int aArgc, const char* const aArgv[]) {
             "Path to data file csv (mnist_test.csv)")
         ("output-model,o", po::value<std::string>(),
             "Output file with trained model and network configuration")
+        ("epochs,e", po::value<int>()->default_value(kDefaultEpochs),
+            "Number of epochs to learning (Supported values: 1 - 100)")
         ("learning-rate,l",
             po::value<double>()->default_value(kDefaultLearningRate),
             "Learning rate for optimizer. Typical values: 0.1–0.001")
-        ("epochs,e",
-            po::value<int>()->default_value(kDefaultEpochs),
-            "Learning rate for optimizer. Typical values: 0.1–0.001");
+        ("hidden-layers,s",
+            po::value<std::string>()->default_value(kDefaultHiddenLayers),
+            "Comma-separated list of hidden layer sizes, e.g., 768,512,256,10");
 
     po::options_description recDesc("Recognition options");
     recDesc.add_options()
@@ -121,18 +150,25 @@ void Application::initTrainingMode(const po::variables_map& aVm) {
     std::string trainFile;
     std::string testFile;
     std::string outputFile;
+    std::vector<size_t> layers;
     int epochs;
     double learningRate;
+    std::string hiddenLayersString;
 
     if (!getValue(aVm, "train-data", trainFile, "--train-data")      ||
         !getValue(aVm, "test-data", testFile, "--test-data")         ||
         !getValue(aVm, "output-model", outputFile, "--output-model") ||
         !getValue(aVm, "epochs", epochs, "--epochs")                 ||
-        !getValue(aVm, "learning-rate", learningRate, "--learning-rate")) {
+        !getValue(aVm, "learning-rate", learningRate, "--learning-rate") ||
+        !getValue(aVm, "hidden-layers", hiddenLayersString,
+                  "--hidden-layers")) {
         return;
     }
 
-    handleTrainingMode(trainFile, testFile, outputFile, epochs, learningRate);
+    layers = parseLayersString(hiddenLayersString);
+
+    handleTrainingMode(trainFile, testFile, outputFile,
+                       layers, epochs, learningRate);
 }
 
 void Application::initRecognitionMode(const po::variables_map& aVm) {
@@ -163,8 +199,6 @@ bool Application::loadMnistCsv(const std::string& aFileName,
         return false;
     }
 
-    constexpr char kDelimeter = ',';
-
     std::ifstream file(aFileName);
     if (!file.is_open()) {
         LOG_ERROR << "Unable to open file: " + aFileName;
@@ -190,7 +224,7 @@ bool Application::loadMnistCsv(const std::string& aFileName,
         std::string cell;
         int label = -1;
         // Get label (first value)
-        if (!std::getline(ss, cell, kDelimeter)) {
+        if (!std::getline(ss, cell, kMnistCsvDelimeter)) {
             LOG_ERROR << "Missing label in line " << lineNumber
                 << " of file " << aFileName;
             return false;
@@ -214,7 +248,7 @@ bool Application::loadMnistCsv(const std::string& aFileName,
         // Get image pixels
         size_t pixelCounter = 0;
         while (pixelCounter < kImageSize &&
-               std::getline(ss, cell, kDelimeter)) {
+               std::getline(ss, cell, kMnistCsvDelimeter)) {
             try {
                 pixels[pixelCounter++] =
                     std::stod(cell) / 255.0;  // Pixel normalization
@@ -381,7 +415,7 @@ bool Application::loadModelFromJson(const std::string& aFileName,
     }
 
     // Read architecture
-    std::vector<int> architecture;
+    std::vector<size_t> architecture;
     try {
         for (const auto& layerSize : jsonModel["architecture"].as_array()) {
             if (!layerSize.is_number()) {
@@ -458,6 +492,7 @@ int Application::run(const int aArgc, const char* const aArgv[]) {
 void Application::handleTrainingMode(const std::string& aMnistTrainFile,
                                      const std::string& aMnistTestFile,
                                      const std::string& aOutputModelFile,
+                                     const std::vector<size_t> aLayers,
                                      const int aEpochs,
                                      const double aLearningRate) {
     if (!std::filesystem::exists(aMnistTrainFile)) {
@@ -475,6 +510,11 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
         return;
     }
 
+    if (aLayers.size() < 3) {
+        LOG_ERROR << "Layer counter less than minimum layers number(3)";
+        return;
+    }
+
     if (aEpochs <= 0 || aEpochs > 100) {
         LOG_ERROR << "Epochs value wrong on not effective: "
                   << aEpochs;
@@ -487,15 +527,19 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
         return;
     }
 
+    std::string layersStr = vectorToString(aLayers);
+
     LOG_INFO << "Training mode parameters:\n"
-             << "\tTrain file:\t" << aMnistTrainFile << "\n"
-             << "\tTest file:\t" << aMnistTestFile << "\n"
-             << "\tModel file:\t" << aOutputModelFile << "\n"
-             << "\tEpochs num:\t" << aEpochs << "\n"
-             << "\tLearning rate:\t" << aLearningRate;
+             << "\tTrain file\t:\t" << aMnistTrainFile << "\n"
+             << "\tTest file\t:\t" << aMnistTestFile << "\n"
+             << "\tModel file\t:\t" << aOutputModelFile << "\n"
+             << "\tLayers model\t:\t" << layersStr << "\n"
+             << "\tEpochs num\t:\t" << aEpochs << "\n"
+             << "\tLearning rate\t:\t" << aLearningRate;
 
     auto function = Neuron::ActivationFunction::SIGMOID;
-    Perceptron network({kImageSize, 256, 128, kNumClasses}, function);
+    // Perceptron network({kImageSize, 256, 128, kNumClasses}, function);
+    Perceptron network(aLayers, function);
 
     // Load train data
     std::vector<std::vector<double>> trainInputs;
