@@ -199,7 +199,7 @@ bool MainWindow::loadModelFromJson(const QString& aFileName,
     }
 
     // Read architecture
-    std::vector<int> architecture;
+    std::vector<size_t> architecture;
     try {
         for (const auto& layerSize : jsonModel["architecture"].as_array()) {
             if (!layerSize.is_number()) {

@@ -11,12 +11,12 @@
 #include "include/logger.hpp"
 
 
-Perceptron::Perceptron(const std::vector<int>& aLayers,
-    Neuron::ActivationFunction aFunction) {
+Perceptron::Perceptron(const std::vector<size_t> &aLayers,
+                       Neuron::ActivationFunction aFunction) {
     initializeNetwork(aLayers, aFunction);
 }
 
-bool Perceptron::initializeNetwork(const std::vector<int>& aLayers,
+bool Perceptron::initializeNetwork(const std::vector<size_t>& aLayers,
     Neuron::ActivationFunction aFunction) {
     m_isConfigured = false;
     m_isTrained = false;
