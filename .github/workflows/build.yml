@@ -20,14 +20,14 @@ jobs:
       with:
         python-version: '3.12'
 
+    - name: Update apt-get
+      run: sudo apt-get update
+
     - name: Update Git Submodules
       run: git submodule update --init --recursive
 
     - name: Install and run cpplint
       run: pip install cpplint && cpplint --recursive --exclude=build .
-
-    - name: Update apt-get
-      run: sudo apt-get update
 
     - name: Install Cppcheck
       run: sudo apt-get install -y cppcheck

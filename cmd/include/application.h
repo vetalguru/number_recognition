@@ -16,11 +16,6 @@ class variables_map;
 
 namespace po = boost::program_options;
 
-namespace {
-constexpr int kNumClasses = 10;      // Numbers from 0 to 9
-constexpr int kImageSize = 28 * 28;  // Images 28 px x 28 px
-}
-
 class Application {
  public:
     Application() = default;
@@ -81,6 +76,9 @@ class Application {
 
     std::string vectorToString(const std::vector<size_t>& aVector,
                                char delimiter = ',') const;
+
+    static constexpr int kNumClasses = 10;      // Numbers from 0 to 9
+    static constexpr int kImageSize = 28 * 28;  // Images 28 px x 28 px
 };
 
 #endif  // CMD_INCLUDE_APPLICATION_H_
