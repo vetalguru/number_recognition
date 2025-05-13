@@ -29,6 +29,12 @@ jobs:
     - name: Update apt-get
       run: sudo apt-get update
 
+    - name: Install Cppcheck
+      run: sudo apt-get install -y cppcheck
+
+    - name: Run cppcheck
+      run: ./tools/run_cppcheck.sh
+
     - name: Install GCC
       run: sudo apt-get install -yq g++
 

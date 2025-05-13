@@ -4,6 +4,11 @@
 
 #include <QPainter>
 
+namespace {
+static constexpr int kMnistImageWidth = 28;
+static constexpr int kMnistImageHeight = 28;
+}
+
 DrawWidget::DrawWidget(QWidget *parent)
     : QWidget(parent)
     , m_image(280, 280, QImage::Format_Grayscale8) {

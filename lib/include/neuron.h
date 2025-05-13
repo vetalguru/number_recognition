@@ -4,7 +4,6 @@
 #define LIB_INCLUDE_NEURON_H_
 
 #include <vector>
-#include "include/logger.hpp"
 
 class Neuron {
  public:
