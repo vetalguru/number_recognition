@@ -1,0 +1,130 @@
+#ifndef LIB_MNIST_CSV_DATASET_H_
+#define LIB_MNIST_CSV_DATASET_H_
+
+#include <array>
+#include <vector>
+#include <string>
+#include <shared_mutex>
+#include <fstream>
+#include <mutex>
+#include <sstream>
+
+class MnistCsvDataset {
+public:
+    static constexpr uint8_t kMnistImageWidth = 28;
+    static constexpr uint8_t kMnistImageHeight = 28;
+    static constexpr uint16_t kMnistImageSize =
+        kMnistImageWidth * kMnistImageHeight;
+    static constexpr char kMnistCsvDelimiter = ',';
+
+    using Image = std::array<uint8_t, kMnistImageSize>;
+    using Label = uint8_t;
+    using Pixel = uint8_t;
+    using Entry = std::pair<Label, Image>;
+    using container_type = std::vector<Entry>;
+    using const_iterator = container_type::const_iterator;
+
+    explicit MnistCsvDataset(const std::string& aCsvPath) {
+        m_opened = loadCsv(aCsvPath);
+    }
+
+    size_t size() const noexcept {
+        std::shared_lock lock(m_mutex);
+        return m_data.size();
+    }
+
+    const_iterator begin() const noexcept {
+        std::shared_lock lock(m_mutex);
+        return m_data.begin();
+    }
+
+    const_iterator end() const noexcept {
+        std::shared_lock lock(m_mutex);
+        return m_data.end();
+    }
+
+    const Entry& operator[](std::size_t aIndex) const noexcept {
+        std::shared_lock lock(m_mutex);
+        return m_data[aIndex];
+    }
+
+    const Entry& at(std::size_t aIndex) const {
+        std::shared_lock lock(m_mutex);
+        return m_data.at(aIndex);
+    }
+
+    bool is_open() const noexcept {
+        return m_opened;
+    }
+
+private:
+    bool loadCsv(const std::string& aPath) {
+        std::ifstream file(aPath);
+        if (!file.is_open()) {
+            return false;
+        }
+
+        std::vector<Entry> temp;
+        std::string line;
+
+        while (std::getline(file, line)) {
+            try {
+                temp.emplace_back(parseLine(line));
+            } catch (const std::exception& e) {
+                return false;
+            }
+        }
+
+        std::unique_lock lock(m_mutex);
+        m_data = std::move(temp);
+
+        return true;
+    }
+
+    Entry parseLine(const std::string& aLine) const
+    {
+        std::basic_istringstream ss(aLine);
+        std::string token;
+
+        // Get label
+        if (!std::getline(ss, token, kMnistCsvDelimiter)) {
+            throw std::runtime_error("Missing label in CSV file");
+        }
+
+        int value = std::stoi(token);
+        if (value < 0 || value > 9) {
+            throw std::runtime_error("Invalid label value: " + std::to_string(value));
+        }
+        Label label = static_cast<Label>(value);
+
+        // Get image
+        Image image{};
+        std::size_t pixelCount = 0;
+        while (std::getline(ss, token, kMnistCsvDelimiter)) {
+            if (pixelCount >= kMnistImageSize) {
+                throw std::runtime_error("Too many pixel values in line");
+            }
+        }
+
+        value = std::stoi(token);
+        if (value < 0 || value > 255) {
+            throw std::runtime_error("Pixel out of range: " + std::to_string(value));
+        }
+
+        image[pixelCount++] = static_cast<Pixel>(value);
+
+        if (pixelCount != kMnistImageSize) {
+            throw std::runtime_error("Invalid pixel count: expected " +
+                                     std::to_string(kMnistImageSize) + ", got " +
+                                     std::to_string(pixelCount));
+        }
+
+        return {label, image};
+    }
+
+    container_type m_data;
+    std::mutex m_mutex;
+    bool m_opened = false;
+};
+
+#endif  // LIB_MNIST_CSV_DATASET_H_
