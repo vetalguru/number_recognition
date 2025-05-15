@@ -1,16 +1,18 @@
-#ifndef LIB_MNIST_CSV_DATASET_H_
-#define LIB_MNIST_CSV_DATASET_H_
+// Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
+
+#ifndef LIB_INCLUDE_MNISTCSVDATASET_HPP_
+#define LIB_INCLUDE_MNISTCSVDATASET_HPP_
 
 #include <array>
-#include <vector>
-#include <string>
-#include <shared_mutex>
 #include <fstream>
-#include <mutex>
+#include <shared_mutex>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
-class MnistCsvDataset {
-public:
+class MnistCsvDataSet final {
+ public:
     static constexpr uint8_t kMnistImageWidth = 28;
     static constexpr uint8_t kMnistImageHeight = 28;
     static constexpr uint16_t kMnistImageSize =
@@ -22,25 +24,22 @@ public:
     using Pixel = uint8_t;
     using Entry = std::pair<Label, Image>;
     using container_type = std::vector<Entry>;
-    using const_iterator = container_type::const_iterator;
 
-    explicit MnistCsvDataset(const std::string& aCsvPath) {
+    explicit MnistCsvDataSet(const std::string& aCsvPath) {
         m_opened = loadCsv(aCsvPath);
     }
 
-    size_t size() const noexcept {
+    MnistCsvDataSet(const MnistCsvDataSet&) = delete;
+    MnistCsvDataSet& operator=(const MnistCsvDataSet&) = delete;
+
+    MnistCsvDataSet(MnistCsvDataSet&&) = delete;
+    MnistCsvDataSet& operator=(MnistCsvDataSet&&) = delete;
+
+    ~MnistCsvDataSet() = default;
+
+    std::size_t size() const noexcept {
         std::shared_lock lock(m_mutex);
         return m_data.size();
-    }
-
-    const_iterator begin() const noexcept {
-        std::shared_lock lock(m_mutex);
-        return m_data.begin();
-    }
-
-    const_iterator end() const noexcept {
-        std::shared_lock lock(m_mutex);
-        return m_data.end();
     }
 
     const Entry& operator[](std::size_t aIndex) const noexcept {
@@ -57,7 +56,7 @@ public:
         return m_opened;
     }
 
-private:
+ private:
     bool loadCsv(const std::string& aPath) {
         std::ifstream file(aPath);
         if (!file.is_open()) {
@@ -81,9 +80,8 @@ private:
         return true;
     }
 
-    Entry parseLine(const std::string& aLine) const
-    {
-        std::basic_istringstream ss(aLine);
+    Entry parseLine(const std::string& aLine) const {
+        std::istringstream ss(aLine);
         std::string token;
 
         // Get label
@@ -93,7 +91,8 @@ private:
 
         int value = std::stoi(token);
         if (value < 0 || value > 9) {
-            throw std::runtime_error("Invalid label value: " + std::to_string(value));
+            throw std::runtime_error("Invalid label value: " +
+                                     std::to_string(value));
         }
         Label label = static_cast<Label>(value);
 
@@ -104,27 +103,28 @@ private:
             if (pixelCount >= kMnistImageSize) {
                 throw std::runtime_error("Too many pixel values in line");
             }
-        }
 
-        value = std::stoi(token);
-        if (value < 0 || value > 255) {
-            throw std::runtime_error("Pixel out of range: " + std::to_string(value));
-        }
+            value = std::stoi(token);
+            if (value < 0 || value > 255) {
+                throw std::runtime_error("Pixel out of range: " +
+                                         std::to_string(value));
+            }
 
-        image[pixelCount++] = static_cast<Pixel>(value);
+            image[pixelCount++] = static_cast<Pixel>(value);
+        }
 
         if (pixelCount != kMnistImageSize) {
             throw std::runtime_error("Invalid pixel count: expected " +
-                                     std::to_string(kMnistImageSize) + ", got " +
-                                     std::to_string(pixelCount));
+                    std::to_string(kMnistImageSize) + ", got " +
+                    std::to_string(pixelCount));
         }
 
         return {label, image};
     }
 
     container_type m_data;
-    std::mutex m_mutex;
+    mutable std::shared_mutex m_mutex;
     bool m_opened = false;
 };
 
-#endif  // LIB_MNIST_CSV_DATASET_H_
+#endif  // LIB_INCLUDE_MNISTCSVDATASET_HPP_
