@@ -13,18 +13,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 add_executable(test_neuron test_neuron.cpp)
-target_include_directories(
-    test_neuron
-    PRIVATE
-    ${LIB_RECOGNITION_DIR}
-)
+target_include_directories(test_neuron PRIVATE ${LIB_RECOGNITION_DIR})
+target_link_libraries(test_neuron PRIVATE GTest::gtest_main ${LIB_RECOGNITION_NAME})
 
-target_link_libraries(
-    test_neuron
-    PRIVATE
-    GTest::gtest_main
-    ${LIB_RECOGNITION_NAME}
-)
+add_executable(test_mnist_csv_dataset test_mnist_csv_dataset.cpp)
+target_include_directories(test_mnist_csv_dataset PRIVATE ${LIB_RECOGNITION_DIR})
+target_link_libraries(test_mnist_csv_dataset PRIVATE GTest::gtest_main ${LIB_RECOGNITION_NAME})
 
 add_test(NAME test_neuron COMMAND test_neuron)
-
+add_test(NAME test_mnist_csv_dataset COMMAND test_mnist_csv_dataset)
