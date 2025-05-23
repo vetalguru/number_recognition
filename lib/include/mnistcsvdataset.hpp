@@ -5,6 +5,7 @@
 
 #include <array>
 #include <fstream>
+#include <mutex>
 #include <shared_mutex>
 #include <sstream>
 #include <string>
@@ -26,14 +27,38 @@ class MnistCsvDataSet final {
     using container_type = std::vector<Entry>;
 
     explicit MnistCsvDataSet(const std::string& aCsvPath) {
-        m_opened = loadCsv(aCsvPath);
+        m_isLoaded = loadCsv(aCsvPath);
     }
 
-    MnistCsvDataSet(const MnistCsvDataSet&) = delete;
-    MnistCsvDataSet& operator=(const MnistCsvDataSet&) = delete;
+    MnistCsvDataSet(const MnistCsvDataSet& aOther) {
+        std::shared_lock lock(aOther.m_mutex);
+        m_data = aOther.m_data;
+        m_isLoaded = aOther.m_isLoaded;
+    }
 
-    MnistCsvDataSet(MnistCsvDataSet&&) = delete;
-    MnistCsvDataSet& operator=(MnistCsvDataSet&&) = delete;
+    MnistCsvDataSet& operator=(const MnistCsvDataSet& aOther) {
+        if (this != &aOther) {
+            std::scoped_lock lock(m_mutex, aOther.m_mutex);
+            m_data = aOther.m_data;
+            m_isLoaded = aOther.m_isLoaded;
+        }
+        return *this;
+    }
+
+    MnistCsvDataSet(MnistCsvDataSet&& aOther) noexcept {
+        std::unique_lock lock(aOther.m_mutex);
+        m_data = std::move(aOther.m_data);
+        m_isLoaded = aOther.m_isLoaded;
+    }
+
+    MnistCsvDataSet& operator=(MnistCsvDataSet&& aOther) noexcept {
+        if(this != &aOther) {
+            std::scoped_lock lock(m_mutex, aOther.m_mutex);
+            m_data = std::move(aOther.m_data);
+            m_isLoaded = aOther.m_isLoaded;
+        }
+        return *this;
+    }
 
     ~MnistCsvDataSet() = default;
 
@@ -52,8 +77,8 @@ class MnistCsvDataSet final {
         return m_data.at(aIndex);
     }
 
-    bool is_open() const noexcept {
-        return m_opened;
+    bool isLoaded() const noexcept {
+        return m_isLoaded;
     }
 
  private:
@@ -124,7 +149,7 @@ class MnistCsvDataSet final {
 
     container_type m_data;
     mutable std::shared_mutex m_mutex;
-    bool m_opened = false;
+    bool m_isLoaded = false;
 };
 
 #endif  // LIB_INCLUDE_MNISTCSVDATASET_HPP_
