@@ -15,9 +15,10 @@
 #include <vector>
 #include <utility>
 
-#include "boost/json.hpp"
+#include <boost/json.hpp>
 
 #include "include/perceptron.h"
+#include "include/logger.hpp"
 
 // Unnamed namespace to restrict the scope of constants to this translation unit
 namespace {
@@ -142,7 +143,6 @@ bool MnistLearningForm::loadMnistCsv(const std::string& aFileName,
         std::vector<double> labels(kNumClasses, 0.0);
 
         std::string cell;
-        int label = -1;
         // Get label (first value)
         if (!std::getline(ss, cell, kDelimeter)) {
             LOG_ERROR << "Missing label in line " << lineNumber
@@ -151,7 +151,7 @@ bool MnistLearningForm::loadMnistCsv(const std::string& aFileName,
         }
 
         try {
-            label = std::stoi(cell);
+            int label = std::stoi(cell);
             if (label < 0 || label >= kNumClasses) {
                 LOG_ERROR << "Label in line " << lineNumber
                           << " is out of valid range in file " << aFileName;

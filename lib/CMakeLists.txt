@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(HEADERS_LIST ${CMAKE_CURRENT_SOURCE_DIR}/include/neuron.h
                  ${CMAKE_CURRENT_SOURCE_DIR}/include/perceptron.h
                  ${CMAKE_CURRENT_SOURCE_DIR}/include/mnistcsvdataset.hpp)
+                 ${CMAKE_CURRENT_SOURCE_DIR}/include/perceptron.h)
 
 set(SOURCES_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/perceptron.cpp
                  ${CMAKE_CURRENT_SOURCE_DIR}/src/neuron.cpp)

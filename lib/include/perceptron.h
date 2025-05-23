@@ -10,7 +10,7 @@
 class Perceptron {
  public:
     Perceptron() = default;
-    Perceptron(const std::vector<size_t>& aLayers,
+    explicit Perceptron(const std::vector<size_t>& aLayers,
         Neuron::ActivationFunction aFunction =
             Neuron::ActivationFunction::SIGMOID);
 

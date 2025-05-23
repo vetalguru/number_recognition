@@ -12,7 +12,7 @@
 
 class Perceptron;
 
-class MnistLearningForm : public QDialog {
+class MnistLearningForm final : public QDialog {
     Q_OBJECT
 
  public:

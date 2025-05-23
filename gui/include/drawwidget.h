@@ -12,7 +12,7 @@
 
 #include <vector>
 
-class DrawWidget : public QWidget {
+class DrawWidget final : public QWidget {
     Q_OBJECT
 
  public:
@@ -31,10 +31,6 @@ class DrawWidget : public QWidget {
     void mouseMoveEvent(QMouseEvent *event) override;
 
  private:
-    static constexpr char kMnistDelimiter = ',';
-    static constexpr int kMnistImageWidth = 28;
-    static constexpr int kMnistImageHeight = 28;
-
     QImage m_image;
     QPoint m_lastPoint;
 };

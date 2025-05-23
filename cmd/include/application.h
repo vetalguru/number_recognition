@@ -8,7 +8,6 @@
 
 #include "include/perceptron.h"
 
-
 namespace boost {
 namespace program_options {
 class variables_map;
@@ -19,19 +18,10 @@ namespace po = boost::program_options;
 
 class Application {
  public:
-    static constexpr size_t kNumClasses = 10;      // Numbers from 0 to 9
-    static constexpr size_t kImageSize = 28 * 28;  // Images 28 px x 28 px
-    static constexpr char kDefaultHiddenLayers[] = "512";
-    static constexpr int kDefaultEpochs = 40;
-    static constexpr double kDefaultLearningRate = 0.001;
-
-    static constexpr char kMnistCsvDelimeter = ',';
-
- public:
     Application() = default;
     ~Application() = default;
 
-    int run(const int aArgc, const char* const aArgv[]);
+    int run(const int aArgc, const char* const aArgv[]) const;
 
     Application(const Application&) = delete;
     Application& operator=(const Application&) = delete;
@@ -42,22 +32,22 @@ class Application {
  private:
     std::string version() const;
 
-    void parseCommandLine(const int aArgc, const char* const aArgv[]);
-    void initTrainingMode(const po::variables_map& aVm);
-    void initRecognitionMode(const po::variables_map& aVm);
+    void parseCommandLine(const int aArgc, const char* const aArgv[]) const;
+    void initTrainingMode(const po::variables_map& aVm) const;
+    void initRecognitionMode(const po::variables_map& aVm) const;
 
     void handleTrainingMode(
         const std::string& aMnistTrainFile,
         const std::string& aMnistTestFile,
         const std::string& aOutputModelFile,
-        const std::vector<size_t> aLayers,
+        const std::vector<size_t>& aLayers,
         const int aEpochs,
-        const double aLearningRate);
+        const double aLearningRate) const;
 
     void handleRecognitionMode(
         const std::string& aDataFile,
         const std::string& aModelFile,
-        const std::string& aResultFile);
+        const std::string& aResultFile) const;
 
     bool loadMnistCsv(
         const std::string& aFileName,
@@ -77,7 +67,7 @@ class Application {
     template <typename T>
     bool getValue(const po::variables_map& aVm, const std::string& aKey,
         // NOLINTNEXTLINE(runtime/references)
-        T& aOut, const std::string& aLabel);
+        T& aOut, const std::string& aLabel) const;
 
     std::vector<size_t> parseLayersString(
         const std::string& aInput,
@@ -86,6 +76,9 @@ class Application {
 
     std::string vectorToString(const std::vector<size_t>& aVector,
                                char delimiter = ',') const;
+
+    static constexpr int kNumClasses = 10;      // Numbers from 0 to 9
+    static constexpr int kImageSize = 28 * 28;  // Images 28 px x 28 px
 };
 
 #endif  // CMD_INCLUDE_APPLICATION_H_
