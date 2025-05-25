@@ -79,7 +79,7 @@ std::vector<std::vector<double>> Perceptron::forward(
 
 void Perceptron::train(const std::vector<std::vector<double>>& aInputData,
             const std::vector<std::vector<double>>& aTargetData,
-            int epochs, double aLearningRate) {
+            int aEpochs, double aLearningRate) {
     m_isTrained = false;
 
     if (!m_isConfigured) {
@@ -88,7 +88,7 @@ void Perceptron::train(const std::vector<std::vector<double>>& aInputData,
     }
 
     // For all epochs
-    for (int epoch = 0; epoch < epochs; ++epoch) {
+    for (int epoch = 0; epoch < aEpochs; ++epoch) {
         double totalError = 0.0;
 
         // For all samples
