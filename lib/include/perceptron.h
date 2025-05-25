@@ -25,7 +25,7 @@ class Perceptron {
 
     void train(const std::vector<std::vector<double>>& aInputData,
                 const std::vector<std::vector<double>>& aTargetData,
-                int epochs, double aLearningRate);
+                int aEpochs, double aLearningRate);
 
     bool isTrained() const;
 
