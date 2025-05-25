@@ -20,11 +20,11 @@ class MnistCsvDataSet final {
         kMnistImageWidth * kMnistImageHeight;
     static constexpr char kMnistCsvDelimiter = ',';
 
-    using Image = std::array<uint8_t, kMnistImageSize>;
-    using Label = uint8_t;
-    using Pixel = uint8_t;
-    using Entry = std::pair<Label, Image>;
-    using container_type = std::vector<Entry>;
+    using Image_t = std::array<uint8_t, kMnistImageSize>;
+    using Label_t = uint8_t;
+    using Pixel_t = uint8_t;
+    using Entry_t = std::pair<Label_t, Image_t>;
+    using container_type = std::vector<Entry_t>;
 
     explicit MnistCsvDataSet(const std::string& aCsvPath) {
         m_isLoaded = loadCsv(aCsvPath);
@@ -67,12 +67,12 @@ class MnistCsvDataSet final {
         return m_data.size();
     }
 
-    const Entry& operator[](std::size_t aIndex) const noexcept {
+    const Entry_t& operator[](std::size_t aIndex) const noexcept {
         std::shared_lock lock(m_mutex);
         return m_data[aIndex];
     }
 
-    const Entry& at(std::size_t aIndex) const {
+    const Entry_t& at(std::size_t aIndex) const {
         std::shared_lock lock(m_mutex);
         return m_data.at(aIndex);
     }
@@ -88,7 +88,7 @@ class MnistCsvDataSet final {
             return false;
         }
 
-        std::vector<Entry> temp;
+        std::vector<Entry_t> temp;
         std::string line;
 
         while (std::getline(file, line)) {
@@ -105,7 +105,7 @@ class MnistCsvDataSet final {
         return true;
     }
 
-    Entry parseLine(const std::string& aLine) const {
+    Entry_t parseLine(const std::string& aLine) const {
         std::istringstream ss(aLine);
         std::string token;
 
@@ -119,10 +119,10 @@ class MnistCsvDataSet final {
             throw std::runtime_error("Invalid label value: " +
                                      std::to_string(value));
         }
-        Label label = static_cast<Label>(value);
+        Label_t label = static_cast<Label_t>(value);
 
         // Get image
-        Image image{};
+        Image_t image{};
         std::size_t pixelCount = 0;
         while (std::getline(ss, token, kMnistCsvDelimiter)) {
             if (pixelCount >= kMnistImageSize) {
@@ -135,7 +135,7 @@ class MnistCsvDataSet final {
                                          std::to_string(value));
             }
 
-            image[pixelCount++] = static_cast<Pixel>(value);
+            image[pixelCount++] = static_cast<Pixel_t>(value);
         }
 
         if (pixelCount != kMnistImageSize) {

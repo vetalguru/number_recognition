@@ -13,8 +13,8 @@
 
 class MnistCsvDataSetFixtureBase : public ::testing::Test {
  public:
-    static constexpr MnistCsvDataSet::Label kTestLabelValue = 5;
-    static constexpr MnistCsvDataSet::Pixel kTestPixelValue = 150;
+    static constexpr MnistCsvDataSet::Label_t kTestLabelValue = 5;
+    static constexpr MnistCsvDataSet::Pixel_t kTestPixelValue = 150;
     static constexpr char kDefaultDelimiter =
         MnistCsvDataSet::kMnistCsvDelimiter;
     static constexpr std::size_t kImageSize =
@@ -35,8 +35,8 @@ class MnistCsvDataSetFixtureBase : public ::testing::Test {
     }
 
     static std::string generateCsvLine(
-        MnistCsvDataSet::Label aLabel,
-        MnistCsvDataSet::Pixel aPixel,
+        MnistCsvDataSet::Label_t aLabel,
+        MnistCsvDataSet::Pixel_t aPixel,
         char aDelimiter,
         std::size_t aCount) {
         std::ostringstream oss;
@@ -143,7 +143,7 @@ class MnistCsvDataSetTooManyPixelsFixture : public MnistCsvDataSetFixtureBase {
 // Fixture for wrong label > 9
 class MnistCsvDataSetWrongLabelFixture : public MnistCsvDataSetFixtureBase {
  protected:
-        static constexpr MnistCsvDataSet::Label kTestLabelValue = 10;
+        static constexpr MnistCsvDataSet::Label_t kTestLabelValue = 10;
 
     static void SetUpTestSuite() {
         csvPath = createTempCsvFile({
