@@ -5,7 +5,7 @@
 
 #include <array>
 #include <fstream>
-#include <mutex>
+#include <mutex>  // NOLINT(build/c++11)
 #include <shared_mutex>
 #include <sstream>
 #include <string>
@@ -52,7 +52,7 @@ class MnistCsvDataSet final {
     }
 
     MnistCsvDataSet& operator=(MnistCsvDataSet&& aOther) noexcept {
-        if(this != &aOther) {
+        if (this != &aOther) {
             std::scoped_lock lock(m_mutex, aOther.m_mutex);
             m_data = std::move(aOther.m_data);
             m_isLoaded = aOther.m_isLoaded;
