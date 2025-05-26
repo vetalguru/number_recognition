@@ -2,7 +2,6 @@
 
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <cstdio>
 #include <fstream>
 #include <string>
@@ -54,6 +53,7 @@ class MnistCsvDataSetFixtureBase : public ::testing::Test {
     static std::string createTempCsvFile(
         const std::vector<std::string>& aLines) {
         std::ofstream out(kTestFileName);
+        out << "MNIST CSV HEADER LINE (shouldn't be processed)\n";
         for (const auto& line : aLines) {
             out << line << "\n";
         }
