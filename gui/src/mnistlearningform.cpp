@@ -19,6 +19,7 @@
 
 #include "include/perceptron.h"
 #include "include/logger.hpp"
+#include <include/mnistcsvdataset.hpp>
 
 // Unnamed namespace to restrict the scope of constants to this translation unit
 namespace {
@@ -26,6 +27,24 @@ constexpr char kDelimeter = ',';
 
 constexpr int kNumClasses = 10;      // Numbers from 0 to 9
 constexpr int kImageSize = 28 * 28;  // Images 28 px x 28 px
+
+static inline std::vector<double> ToOneHot(uint8_t aLabel,
+            size_t aNumClasses = 10) {
+    std::vector<double> vec(aNumClasses, 0.0);
+    vec[aLabel] = 1.0;
+    return vec;
+}
+
+static inline std::vector<double> NormalizeImage(
+    const MnistCsvDataSet::Image_t& image) {
+    std::vector<double> result(image.size());
+
+    std::transform(image.begin(), image.end(), result.begin(),
+        [](uint8_t px) { return static_cast<double>(px) / 255.0; });
+
+    return result;
+}
+
 }
 
 MnistLearningForm::MnistLearningForm(QWidget *parent)
@@ -111,96 +130,6 @@ void MnistLearningForm::OnTextEdit() {
     } else {
         m_trainButton->setEnabled(false);
     }
-}
-
-bool MnistLearningForm::loadMnistCsv(const std::string& aFileName,
-                std::vector<std::vector<double>>& aInputs,
-                std::vector<std::vector<double>>& aTargets) const {
-    if (!std::filesystem::exists(aFileName)) {
-        return false;
-    }
-
-    std::ifstream file(aFileName);
-    if (!file.is_open()) {
-        LOG_ERROR << "Unable to open file: " + aFileName;
-        return false;
-    }
-
-    std::string line;
-
-    // First line in csv is a header, pass it
-    if (!std::getline(file, line)) {
-        LOG_ERROR << "File " << aFileName << " has wrong format";
-        return false;
-    }
-
-    int lineNumber = 0;
-    while (std::getline(file, line)) {
-        ++lineNumber;
-
-        std::stringstream ss(line);
-        std::vector<double> pixels(kImageSize, 0.0);
-        std::vector<double> labels(kNumClasses, 0.0);
-
-        std::string cell;
-        // Get label (first value)
-        if (!std::getline(ss, cell, kDelimeter)) {
-            LOG_ERROR << "Missing label in line " << lineNumber
-                      << " of file " << aFileName;
-            return false;
-        }
-
-        try {
-            int label = std::stoi(cell);
-            if (label < 0 || label >= kNumClasses) {
-                LOG_ERROR << "Label in line " << lineNumber
-                          << " is out of valid range in file " << aFileName;
-                return false;
-            }
-            labels[label] = 1.0;  // One-hot encoding
-        } catch (const std::exception& e) {
-            LOG_ERROR << "Invalid label '" << cell
-                      << "' in line " << lineNumber << " of file " << aFileName
-                      << " with error: " << e.what();
-            return false;
-        }
-
-        // Get image pixels
-        size_t pixelCounter = 0;
-        while (pixelCounter < kImageSize &&
-               std::getline(ss, cell, kDelimeter)) {
-            try {
-                pixels[pixelCounter++] =
-                    std::stod(cell) / 255.0;  // Pixel normalization
-            } catch (const std::exception& e) {
-                LOG_ERROR << "Invalid pixel value '" << cell
-                          << "' line " << lineNumber
-                          << " in column " << pixelCounter + 1
-                          << " in file "<< aFileName
-                          << " with error: " << e.what();
-                return false;
-            }
-        }
-
-        if (pixelCounter != kImageSize) {
-            LOG_ERROR << "Line " << lineNumber
-                      << " in file " << aFileName << " has " << pixelCounter
-                      << "pixels values but expected " << kImageSize;
-            return false;
-        }
-
-        aInputs.emplace_back(std::move(pixels));
-        aTargets.emplace_back(std::move(labels));
-    }
-
-    if (aInputs.empty() || aInputs.size() != aTargets.size()) {
-        LOG_ERROR << "No valid data found in file " << aFileName;
-        aInputs.clear();
-        aTargets.clear();
-        return false;
-    }
-
-    return true;
 }
 
 bool MnistLearningForm::saveModelToJson(const std::string& aFileName,
@@ -304,13 +233,23 @@ void MnistLearningForm::onTrainButtonClick() {
         std::vector<std::vector<double>> trainTargets;
 
         LOG_INFO << "Loading MNIST data...";
-        if (!loadMnistCsv(trainFile, trainInputs, trainTargets)) {
-            QMetaObject::invokeMethod(this, [=]() {
-                QMessageBox::critical(this,
-                    "Error", "Failed to load training data");
-                m_trainButton->setEnabled(true);
-            }, Qt::QueuedConnection);
-            return;
+        {
+            MnistCsvDataSet trainSet(trainFile);
+            if (!trainSet.isLoaded()) {
+                QMetaObject::invokeMethod(this, [=]() {
+                    QMessageBox::critical(this,
+                                          "Error", "Failed to load training data");
+                    m_trainButton->setEnabled(true);
+                }, Qt::QueuedConnection);
+                return;
+            }
+
+            trainInputs.resize(trainSet.size());
+            trainTargets.resize(trainSet.size());
+            for (size_t i = 0; i < trainSet.size(); ++i) {
+                trainTargets[i] = ToOneHot(trainSet[i].first);
+                trainInputs[i] = NormalizeImage(trainSet[i].second);
+            }
         }
 
         LOG_INFO << "Training started...";

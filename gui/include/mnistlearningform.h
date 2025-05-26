@@ -26,12 +26,6 @@ class MnistLearningForm final : public QDialog {
     void OnTextEdit();
 
  private:
-    bool loadMnistCsv(const std::string& aFileName,
-                      // NOLINTNEXTLINE(runtime/references)
-                      std::vector<std::vector<double>>& aInputs,
-                      // NOLINTNEXTLINE(runtime/references)
-                      std::vector<std::vector<double>>& aTargets) const;
-
     bool saveModelToJson(const std::string& aFileName,
                          const Perceptron& aNetwork) const;
 
