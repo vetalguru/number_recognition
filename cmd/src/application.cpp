@@ -18,6 +18,7 @@
 #include "version.h"  // NOLINT (build/include_subdir)
 
 #include "include/logger.hpp"
+#include "include/mnistcsvdataset.hpp"
 
 
 // Unnamed namespace to restrict the scope of constants to this translation unit
@@ -76,6 +77,21 @@ std::string Application::vectorToString(const std::vector<size_t>& aVector,
         oss << aVector[i];
     }
     return oss.str();
+}
+
+std::vector<double> Application::toOneHot(uint8_t aLabel, size_t aNumClasses) const {
+    std::vector<double> vec(aNumClasses, 0.0);
+    vec[aLabel] = 1.0;
+    return vec;
+}
+
+std::vector<double> Application::normalizeImage(const MnistCsvDataSet::Image_t& image) const {
+    std::vector<double> result(image.size());
+
+    std::transform(image.begin(), image.end(), result.begin(),
+                   [](uint8_t px) { return static_cast<double>(px) / 255.0; });
+
+    return result;
 }
 
 void Application::parseCommandLine(const int aArgc,
@@ -190,98 +206,6 @@ void Application::initRecognitionMode(const po::variables_map& aVm) const {
              << "\tResult file:\t" << resultFile;
 
     handleRecognitionMode(dataFile, modelFile, resultFile);
-}
-
-bool Application::loadMnistCsv(const std::string& aFileName,
-    std::vector<std::vector<double>>& aInputs,
-    std::vector<std::vector<double>>& aTargets) const {
-
-    if (!std::filesystem::exists(aFileName)) {
-        LOG_ERROR << "File " << aFileName << " does not exist";
-        return false;
-    }
-
-    std::ifstream file(aFileName);
-    if (!file.is_open()) {
-        LOG_ERROR << "Unable to open file: " + aFileName;
-        return false;
-    }
-
-    std::string line;
-
-    // First line in csv is a header, pass it
-    if (!std::getline(file, line)) {
-        LOG_ERROR << "File " << aFileName << " has wrong format";
-        return false;
-    }
-
-    int lineNumber = 0;
-    while (std::getline(file, line)) {
-        ++lineNumber;
-
-        std::stringstream ss(line);
-        std::vector<double> pixels(kImageSize, 0.0);
-        std::vector<double> labels(kNumClasses, 0.0);
-
-        std::string cell;
-        // Get label (first value)
-        if (!std::getline(ss, cell, kMnistCsvDelimeter)) {
-            LOG_ERROR << "Missing label in line " << lineNumber
-                << " of file " << aFileName;
-            return false;
-        }
-
-        try {
-            int label = std::stoi(cell);
-            if (label < 0 || label >= kNumClasses) {
-                LOG_ERROR << "Label in line " << lineNumber
-                    << " is out of valid range in file " << aFileName;
-                return false;
-            }
-            labels[label] = 1.0;  // One-hot encoding
-        } catch (const std::exception& e) {
-            LOG_ERROR << "Invalid label '" << cell
-                << "' in line " << lineNumber << " of file " << aFileName
-                << " with error: " << e.what();
-            return false;
-        }
-
-        // Get image pixels
-        size_t pixelCounter = 0;
-        while (pixelCounter < kImageSize &&
-               std::getline(ss, cell, kMnistCsvDelimeter)) {
-            try {
-                pixels[pixelCounter++] =
-                    std::stod(cell) / 255.0;  // Pixel normalization
-            } catch (const std::exception& e) {
-                LOG_ERROR << "Invalid pixel value '" << cell
-                    << "' line " << lineNumber
-                    << " in column " << pixelCounter + 1
-                    << " in file "<< aFileName
-                    << " with error: " << e.what();
-                return false;
-            }
-        }
-
-        if (pixelCounter != kImageSize) {
-            LOG_ERROR << "Line " << lineNumber
-                << " in file " << aFileName << " has " << pixelCounter
-                << "pixels values but expected " << kImageSize;
-            return false;
-        }
-
-        aInputs.emplace_back(std::move(pixels));
-        aTargets.emplace_back(std::move(labels));
-    }
-
-    if (aInputs.empty() || aInputs.size() != aTargets.size()) {
-        LOG_ERROR << "No valid data found in file " << aFileName;
-        aInputs.clear();
-        aTargets.clear();
-        return false;
-    }
-
-    return true;
 }
 
 bool Application::saveModelToJson(const std::string& aFileName,
@@ -539,15 +463,24 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
              << "\tLearning rate\t:\t" << aLearningRate;
 
     auto function = Neuron::ActivationFunction::SIGMOID;
-    // Perceptron network({kImageSize, 256, 128, kNumClasses}, function);
     Perceptron network(aLayers, function);
 
     // Load train data
     std::vector<std::vector<double>> trainInputs;
     std::vector<std::vector<double>> trainTargets;
-    if (!loadMnistCsv(aMnistTrainFile, trainInputs, trainTargets)) {
-        LOG_ERROR << "Unable to load MNIST data from file " << aMnistTrainFile;
-        return;
+    {
+        MnistCsvDataSet trainSet(aMnistTrainFile);
+        if (!trainSet.isLoaded()) {
+            LOG_ERROR << "Unable to load MNIST data from file " << aMnistTrainFile;
+            return;
+        }
+
+        trainInputs.resize(trainSet.size());
+        trainTargets.resize(trainSet.size());
+        for (size_t i = 0; i < trainSet.size(); ++i) {
+            trainTargets[i] = toOneHot(trainSet[i].first);
+            trainInputs[i] = normalizeImage(trainSet[i].second);
+        }
     }
 
     // Train model
@@ -558,8 +491,19 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
     // Load test data
     std::vector<std::vector<double>> testInputs;
     std::vector<std::vector<double>> testTargets;
-    if (!loadMnistCsv(aMnistTestFile, testInputs, testTargets)) {
-        LOG_ERROR << "Unable to load MNIST data from file " << aMnistTestFile;
+    {
+        MnistCsvDataSet testSet(aMnistTestFile);
+        if (!testSet.isLoaded()) {
+            LOG_ERROR << "Unable to load MNIST data from file " << aMnistTrainFile;
+            return;
+        }
+
+        trainInputs.resize(testSet.size());
+        trainTargets.resize(testSet.size());
+        for (size_t i = 0; i < testSet.size(); ++i) {
+            trainTargets[i] = toOneHot(testSet[i].first);
+            trainInputs[i] = normalizeImage(testSet[i].second);
+        }
     }
 
     int correct = 0;
@@ -614,9 +558,19 @@ void Application::handleRecognitionMode(const std::string& aDataFile,
     // Load data
     std::vector<std::vector<double>> inputData;
     std::vector<std::vector<double>> dummyTarget;
-    if (!loadMnistCsv(aDataFile, inputData, dummyTarget)) {
-        LOG_ERROR << "Failed to load data from " << aDataFile;
-        return;
+    {
+        MnistCsvDataSet testSet(aDataFile);
+        if (!testSet.isLoaded()) {
+            LOG_ERROR << "Unable to load MNIST data from file " << aDataFile;
+            return;
+        }
+
+        inputData.resize(testSet.size());
+        dummyTarget.resize(testSet.size());
+        for (size_t i = 0; i < testSet.size(); ++i) {
+            dummyTarget[i] = toOneHot(testSet[i].first);
+            inputData[i] = normalizeImage(testSet[i].second);
+        }
     }
 
     double minPixel =
