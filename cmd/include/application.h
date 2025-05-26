@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "include/perceptron.h"
+#include "include/mnistcsvdataset.hpp"
 
 namespace boost {
 namespace program_options {
@@ -49,13 +50,6 @@ class Application {
         const std::string& aModelFile,
         const std::string& aResultFile) const;
 
-    bool loadMnistCsv(
-        const std::string& aFileName,
-        // NOLINTNEXTLINE(runtime/references)
-        std::vector<std::vector<double>>& aInputs,
-        // NOLINTNEXTLINE(runtime/references)
-        std::vector<std::vector<double>>& aTargets) const;
-
     bool saveModelToJson(
         const std::string& aFileName,
         const Perceptron& aNetwork) const;
@@ -76,6 +70,10 @@ class Application {
 
     std::string vectorToString(const std::vector<size_t>& aVector,
                                char delimiter = ',') const;
+
+    std::vector<double> toOneHot(uint8_t aLabel, size_t aNumClasses = 10) const;
+
+    std::vector<double> normalizeImage(const MnistCsvDataSet::Image_t& image) const;
 
     static constexpr int kNumClasses = 10;      // Numbers from 0 to 9
     static constexpr int kImageSize = 28 * 28;  // Images 28 px x 28 px
