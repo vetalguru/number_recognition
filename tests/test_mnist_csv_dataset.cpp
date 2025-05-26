@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cstdio>
 #include <fstream>
 #include <string>
