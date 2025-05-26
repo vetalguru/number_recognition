@@ -79,13 +79,15 @@ std::string Application::vectorToString(const std::vector<size_t>& aVector,
     return oss.str();
 }
 
-std::vector<double> Application::toOneHot(uint8_t aLabel, size_t aNumClasses) const {
+std::vector<double> Application::toOneHot(
+    uint8_t aLabel, size_t aNumClasses) const {
     std::vector<double> vec(aNumClasses, 0.0);
     vec[aLabel] = 1.0;
     return vec;
 }
 
-std::vector<double> Application::normalizeImage(const MnistCsvDataSet::Image_t& image) const {
+std::vector<double> Application::normalizeImage(
+    const MnistCsvDataSet::Image_t& image) const {
     std::vector<double> result(image.size());
 
     std::transform(image.begin(), image.end(), result.begin(),
@@ -471,7 +473,9 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
     {
         MnistCsvDataSet trainSet(aMnistTrainFile);
         if (!trainSet.isLoaded()) {
-            LOG_ERROR << "Unable to load MNIST data from file " << aMnistTrainFile;
+            LOG_ERROR
+                << "Unable to load MNIST data from file "
+                << aMnistTrainFile;
             return;
         }
 
@@ -494,7 +498,9 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
     {
         MnistCsvDataSet testSet(aMnistTestFile);
         if (!testSet.isLoaded()) {
-            LOG_ERROR << "Unable to load MNIST data from file " << aMnistTrainFile;
+            LOG_ERROR
+                << "Unable to load MNIST data from file "
+                << aMnistTrainFile;
             return;
         }
 

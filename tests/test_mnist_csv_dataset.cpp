@@ -383,7 +383,7 @@ TEST_F(MnistCsvDataSetTooManyPixelsFixture,
 
 TEST_F(MnistCsvDataSetWrongLabelFixture,
        InvalidCsv_WrongLabelValue_ShouldFail) {
-    const auto dataset  = getDataset();
+    const auto dataset = getDataset();
 
     ASSERT_FALSE(dataset.isLoaded());
 }

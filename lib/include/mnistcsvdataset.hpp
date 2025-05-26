@@ -3,7 +3,6 @@
 #ifndef LIB_INCLUDE_MNISTCSVDATASET_HPP_
 #define LIB_INCLUDE_MNISTCSVDATASET_HPP_
 
-#include "include/logger.hpp"
 #include <array>
 #include <fstream>
 #include <mutex>  // NOLINT(build/c++11)
@@ -98,8 +97,7 @@ class MnistCsvDataSet final {
         while (std::getline(file, line)) {
             try {
                 temp.emplace_back(parseLine(line));
-            } catch (const std::exception& e) {
-                LOG_ERROR << "Unable to parse MNIST with error: " << e.what();
+            } catch (...) {
                 return false;
             }
         }

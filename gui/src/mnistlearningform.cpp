@@ -44,8 +44,7 @@ static inline std::vector<double> NormalizeImage(
 
     return result;
 }
-
-}
+}  // namespace
 
 MnistLearningForm::MnistLearningForm(QWidget *parent)
     : QDialog(parent) {
@@ -238,7 +237,7 @@ void MnistLearningForm::onTrainButtonClick() {
             if (!trainSet.isLoaded()) {
                 QMetaObject::invokeMethod(this, [=]() {
                     QMessageBox::critical(this,
-                                          "Error", "Failed to load training data");
+                        "Error", "Failed to load training data");
                     m_trainButton->setEnabled(true);
                 }, Qt::QueuedConnection);
                 return;
