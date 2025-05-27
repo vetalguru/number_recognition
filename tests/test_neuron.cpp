@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "include/neuron.h"
+#include "include/neuron.hpp"
 
 
 TEST(NeuronTest, Inititalization) {

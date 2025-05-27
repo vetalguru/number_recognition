@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#include "include/application.h"
+#include "include/application.hpp"
 
 #include <algorithm>
 #include <iostream>  // For help and version output

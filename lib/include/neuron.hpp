@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#ifndef LIB_INCLUDE_NEURON_H_
-#define LIB_INCLUDE_NEURON_H_
+#ifndef LIB_INCLUDE_NEURON_HPP_
+#define LIB_INCLUDE_NEURON_HPP_
 
 #include <vector>
 
@@ -45,4 +45,4 @@ class Neuron {
     ActivationFunction m_function;
 };
 
-#endif  // LIB_INCLUDE_NEURON_H_
+#endif  // LIB_INCLUDE_NEURON_HPP_

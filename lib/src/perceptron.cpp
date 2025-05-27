@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#include "include/perceptron.h"
+#include "include/perceptron.hpp"
 
 #include <complex>
 #include <iostream>

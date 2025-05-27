@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#ifndef GUI_INCLUDE_MNISTLEARNINGFORM_H_
-#define GUI_INCLUDE_MNISTLEARNINGFORM_H_
+#ifndef GUI_INCLUDE_MNISTLEARNINGFORM_HPP_
+#define GUI_INCLUDE_MNISTLEARNINGFORM_HPP_
 
 #include <QDialog>
 #include <QLineEdit>
@@ -35,4 +35,4 @@ class MnistLearningForm final : public QDialog {
     QPushButton *m_trainButton = nullptr;
 };
 
-#endif  // GUI_INCLUDE_MNISTLEARNINGFORM_H_
+#endif  // GUI_INCLUDE_MNISTLEARNINGFORM_HPP_

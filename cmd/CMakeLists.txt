@@ -13,7 +13,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(HEADERS_LIST
     ${CMAKE_BINARY_DIR}/version.h
-    ${CMD_RECOGNITION_DIR}/include/application.h
+    ${CMD_RECOGNITION_DIR}/include/application.hpp
 )
 
 set(SOURCES_LIST

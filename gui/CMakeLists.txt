@@ -32,9 +32,9 @@ set(SOURCES
 )
 
 set(HEADERS
-    ${GUI_RECOGNITION_DIR}/include/mainwindow.h
-    ${GUI_RECOGNITION_DIR}/include/drawwidget.h
-    ${GUI_RECOGNITION_DIR}/include/mnistlearningform.h
+    ${GUI_RECOGNITION_DIR}/include/mainwindow.hpp
+    ${GUI_RECOGNITION_DIR}/include/drawwidget.hpp
+    ${GUI_RECOGNITION_DIR}/include/mnistlearningform.hpp
 )
 
 add_executable(${GUI_RECOGNITION_NAME} ${SOURCES} ${HEADERS})

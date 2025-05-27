@@ -1,11 +1,11 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#ifndef LIB_INCLUDE_PERCEPTRON_H_
-#define LIB_INCLUDE_PERCEPTRON_H_
+#ifndef LIB_INCLUDE_PERCEPTRON_HPP_
+#define LIB_INCLUDE_PERCEPTRON_HPP_
 
 #include <vector>
 
-#include "include/neuron.h"
+#include "include/neuron.hpp"
 
 class Perceptron {
  public:
@@ -43,4 +43,4 @@ class Perceptron {
     bool m_isTrained = false;
 };
 
-#endif  // LIB_INCLUDE_PERCEPTRON_H_
+#endif  // LIB_INCLUDE_PERCEPTRON_HPP_
