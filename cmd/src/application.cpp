@@ -504,11 +504,11 @@ void Application::handleTrainingMode(const std::string& aMnistTrainFile,
             return;
         }
 
-        trainInputs.resize(testSet.size());
-        trainTargets.resize(testSet.size());
+        testInputs.resize(testSet.size());
+        testTargets.resize(testSet.size());
         for (size_t i = 0; i < testSet.size(); ++i) {
-            trainTargets[i] = toOneHot(testSet[i].first);
-            trainInputs[i] = normalizeImage(testSet[i].second);
+            testTargets[i] = toOneHot(testSet[i].first);
+            testInputs[i] = normalizeImage(testSet[i].second);
         }
     }
 
