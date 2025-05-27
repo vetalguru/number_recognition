@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#include "include/drawwidget.h"
+#include "include/drawwidget.hpp"
 
 #include <QPainter>
 

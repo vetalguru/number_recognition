@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#include "include/mnistlearningform.h"
+#include "include/mnistlearningform.hpp"
 
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -18,7 +18,7 @@
 
 #include <boost/json.hpp>
 
-#include "include/perceptron.h"
+#include "include/perceptron.hpp"
 #include "include/logger.hpp"
 #include <include/mnistcsvdataset.hpp>
 

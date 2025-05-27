@@ -1,14 +1,14 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#ifndef GUI_INCLUDE_MAINWINDOW_H_
-#define GUI_INCLUDE_MAINWINDOW_H_
+#ifndef GUI_INCLUDE_MAINWINDOW_HPP_
+#define GUI_INCLUDE_MAINWINDOW_HPP_
 
 #include <QMainWindow>
 #include <QProgressBar>
 #include <QPushButton>
 #include <QString>
 
-#include "include/perceptron.h"
+#include "include/perceptron.hpp"
 
 class DrawWidget;
 
@@ -44,4 +44,4 @@ class MainWindow final : public QMainWindow {
     QString m_modelFileName;
 };
 
-#endif  // GUI_INCLUDE_MAINWINDOW_H_
+#endif  // GUI_INCLUDE_MAINWINDOW_HPP_

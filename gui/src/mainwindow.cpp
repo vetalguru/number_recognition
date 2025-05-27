@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#include "include/mainwindow.h"
+#include "include/mainwindow.hpp"
 
 #include <QWidget>
 #include <QHBoxLayout>
@@ -20,8 +20,8 @@
 
 #include <boost/json.hpp>
 
-#include "include/drawwidget.h"
-#include "include/mnistlearningform.h"
+#include "include/drawwidget.hpp"
+#include "include/mnistlearningform.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {

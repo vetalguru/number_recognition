@@ -1,12 +1,12 @@
 // Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
 
-#ifndef CMD_INCLUDE_APPLICATION_H_
-#define CMD_INCLUDE_APPLICATION_H_
+#ifndef CMD_INCLUDE_APPLICATION_HPP_
+#define CMD_INCLUDE_APPLICATION_HPP_
 
 #include <string>
 #include <vector>
 
-#include "include/perceptron.h"
+#include "include/perceptron.hpp"
 #include "include/mnistcsvdataset.hpp"
 
 namespace boost {
@@ -80,4 +80,4 @@ class Application {
     static constexpr int kImageSize = 28 * 28;  // Images 28 px x 28 px
 };
 
-#endif  // CMD_INCLUDE_APPLICATION_H_
+#endif  // CMD_INCLUDE_APPLICATION_HPP_
