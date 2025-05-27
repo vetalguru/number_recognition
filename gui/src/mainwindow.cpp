@@ -20,6 +20,8 @@
 
 #include <boost/json.hpp>
 
+#include "guiversion.h"
+
 #include "include/drawwidget.hpp"
 #include "include/mnistlearningform.hpp"
 
@@ -157,8 +159,15 @@ void MainWindow::onLearnModel() {
 }
 
 void MainWindow::onAbout() {
+    std::ostringstream ss;
+    ss << static_cast<int>(VERSION_MAJOR) << "."
+       << static_cast<int>(VERSION_MINOR) << "."
+       << VERSION_BUILD;
+
     QMessageBox::about(this, "About...",
-                       "The application for number recognition");
+                       "The application for number recognition\n\n"
+                       "Version : " +
+                       QString::fromStdString(ss.str()));
 }
 
 bool MainWindow::loadModelFromJson(const QString& aFileName,
