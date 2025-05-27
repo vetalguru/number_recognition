@@ -30,35 +30,11 @@ class MnistCsvDataSet final {
         m_isLoaded = loadCsv(aCsvPath);
     }
 
-    MnistCsvDataSet(const MnistCsvDataSet& aOther) {
-        std::shared_lock lock(aOther.m_mutex);
-        m_data = aOther.m_data;
-        m_isLoaded = aOther.m_isLoaded;
-    }
+    MnistCsvDataSet(const MnistCsvDataSet& aOther) = delete;
+    MnistCsvDataSet& operator=(const MnistCsvDataSet& aOther) = delete;
 
-    MnistCsvDataSet& operator=(const MnistCsvDataSet& aOther) {
-        if (this != &aOther) {
-            std::scoped_lock lock(m_mutex, aOther.m_mutex);
-            m_data = aOther.m_data;
-            m_isLoaded = aOther.m_isLoaded;
-        }
-        return *this;
-    }
-
-    MnistCsvDataSet(MnistCsvDataSet&& aOther) noexcept {
-        std::unique_lock lock(aOther.m_mutex);
-        m_data = std::move(aOther.m_data);
-        m_isLoaded = aOther.m_isLoaded;
-    }
-
-    MnistCsvDataSet& operator=(MnistCsvDataSet&& aOther) noexcept {
-        if (this != &aOther) {
-            std::scoped_lock lock(m_mutex, aOther.m_mutex);
-            m_data = std::move(aOther.m_data);
-            m_isLoaded = aOther.m_isLoaded;
-        }
-        return *this;
-    }
+    MnistCsvDataSet(MnistCsvDataSet&& aOther) = delete;
+    MnistCsvDataSet& operator=(MnistCsvDataSet&& aOther) = delete;
 
     ~MnistCsvDataSet() = default;
 
@@ -108,7 +84,7 @@ class MnistCsvDataSet final {
         return true;
     }
 
-    Entry_t parseLine(const std::string& aLine) const {
+    static Entry_t parseLine(const std::string& aLine) {
         std::istringstream ss(aLine);
         std::string token;
 
