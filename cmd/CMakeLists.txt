@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.25)
 
 project(${CMD_RECOGNITION_NAME})
 
-set(VERSION_MAJOR 0)
-set(VERSION_MINOR 1)
-
 set(BUILD_TESTS OFF CACHE BOOL "Disable logger tests" FORCE)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -12,7 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(HEADERS_LIST
-    ${CMAKE_BINARY_DIR}/version.h
     ${CMD_RECOGNITION_DIR}/include/application.hpp
 )
 
@@ -36,13 +32,16 @@ else()
     set(VERSION_BUILD "unknown")
 endif()
 
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 6)
+
 message(STATUS "Git command exit status: ${GIT_CMD_STATUS}")
 message(STATUS "Git commit hash: '${GIT_COMMIT_HASH}'")
 message(STATUS "VERSION BUILD: '${VERSION_BUILD}'")
 
 configure_file(
     ${CMAKE_SOURCE_DIR}/version.h.in
-    ${CMAKE_BINARY_DIR}/version.h
+    ${CMAKE_BINARY_DIR}/cmd/cmdversion.h
     @ONLY
 )
 
@@ -57,11 +56,11 @@ add_executable(
 target_include_directories(
     ${CMD_RECOGNITION_NAME}
     PRIVATE
-    ${CMAKE_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/cmd
     ${Boost_INCLUDE_DIRS}
     ${LIB_RECOGNITION_DIR}
     ${CMD_RECOGNITION_DIR}
-    ${LIB_RECOGNITION_DIR}/submodule/logger
+    ${THIRDPARTY_DIR}/logger
 )
 
 target_link_libraries(
