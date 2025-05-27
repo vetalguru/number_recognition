@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Vitalii Shkibtan. All rights reserved.
+// Copyright (c) 2025 Vitalii Shkibtan./ All rights reserved.
 
 #include <gtest/gtest.h>
 
@@ -28,6 +28,7 @@ class MnistCsvDataSetFixtureBase : public ::testing::Test {
     static inline std::string csvPath;
 
  protected:
+    // cppcheck-suppress unusedFunction
     static void TearDownTestSuite() {
         if (!csvPath.empty()) {
             std::remove(csvPath.c_str());
@@ -66,6 +67,7 @@ class MnistCsvDataSetFixtureBase : public ::testing::Test {
 // Fixture for valid dataset
 class MnistCsvDataSetValidFixture : public MnistCsvDataSetFixtureBase {
  protected:
+    // cppcheck-suppress unusedFunction
     static void SetUpTestSuite() {
         csvPath = createTempCsvFile({
             generateCsvLine(kTestLabelValue, kTestPixelValue,
@@ -144,7 +146,7 @@ class MnistCsvDataSetTooManyPixelsFixture : public MnistCsvDataSetFixtureBase {
 // Fixture for wrong label > 9
 class MnistCsvDataSetWrongLabelFixture : public MnistCsvDataSetFixtureBase {
  protected:
-        static constexpr MnistCsvDataSet::Label_t kWrongTestLabelValue = 10;
+    static constexpr MnistCsvDataSet::Label_t kWrongTestLabelValue = 10;
 
     static void SetUpTestSuite() {
         csvPath = createTempCsvFile({
