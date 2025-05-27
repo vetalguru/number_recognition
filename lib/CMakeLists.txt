@@ -24,6 +24,5 @@ target_include_directories(
     ${LIB_RECOGNITION_NAME}
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/submodule/logger
+    ${THIRDPARTY_DIR}/logger
 )
-
